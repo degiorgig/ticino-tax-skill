@@ -44,6 +44,8 @@ Rules are versioned by year. If a rule cannot be verified for the requested year
 
 ## Common Commands
 
+To make this checkout available to Hermes in any chat, link the repository directory under `~/.hermes/skills/` (for example, `~/.hermes/skills/domain/ticino-tax`). The link must point to the directory containing `SKILL.md`, `scripts/`, and `rules/`; a copy of `SKILL.md` alone is insufficient. Start a new Hermes session after linking it, then invoke `/ticino-tax`. Run the commands below from the repository directory and keep private inputs outside it.
+
 ```bash
 pip install -r requirements.txt   # PyYAML
 python3 scripts/validate_tax_year.py 2025

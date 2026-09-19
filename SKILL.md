@@ -97,6 +97,8 @@ The schema is extensible for future taxpayer situations.
 
 ## Workflow
 
+Before running a script, use the directory containing this `SKILL.md` as the working directory. Pass absolute paths to private input files stored outside the skill directory. A global Hermes installation may load this skill while the chat's current directory is elsewhere.
+
 1. **Validate the tax year.** Run `scripts/validate_tax_year.py <year>`. `structure_valid: true` means the year is supported in `config.yaml` and its rule files load; preparation may proceed. `status` is `VERIFIED` only when every loaded rule has complete official provenance; with skeleton rule files it is `UNVERIFIED` (exit code 2) and no final field can be `VERIFIED` yet.
 2. **Inventory documents.** `scripts/classify_document.py` gives a keyword-based suggestion that is always `REVIEW_REQUIRED`. Read the document yourself and confirm or correct the class. Completion criterion: every document is categorized or marked `UNKNOWN`.
 3. **Extract values conservatively.** Keep taxpayer documents and filled workpapers outside the repository and installed skill directory. Every extracted value must preserve document, page, field, original text, extracted value, confidence, tax year, and status. Confidence below `config.yaml` `extraction.review_confidence_threshold` stays `REVIEW_REQUIRED`.
