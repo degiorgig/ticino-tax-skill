@@ -24,6 +24,11 @@ authoritative_sources:
     url: https://www.fedlex.admin.ch/
     allowed_for_verified_rules: true
     notes: Use exact SR number, article, version date, and tax year relevance.
+  - authority: BSV / UFAS
+    role: Federal Social Insurance Office, for AVS and other social-insurance rules relevant to a tax workpaper
+    url: https://www.bsv.admin.ch/it
+    allowed_for_verified_rules: true
+    notes: Use a specific year and passage; this is not the authority for income-tax rules.
 disallowed_as_authoritative:
   - blogs
   - accounting-company articles
@@ -40,5 +45,7 @@ provenance_template:
     document: null
     url: null
     page: null
+    article: null
+    section: null
     retrieved_at: null
     verified: false

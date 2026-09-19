@@ -66,6 +66,8 @@ Every operation must include a `tax_year`. The initial supported tax years are `
 - `rules/<tax_year>/sole-proprietorship.yaml` for income-tax treatment of self-employed activity.
 - `rules/<tax_year>/vat.yaml` for VAT as a separate concern.
 
+The sole-proprietorship rule book accepts both federal (`CH`) and Ticino (`CH-TI`) rules. Each rule must declare its own jurisdiction and use an official source appropriate to it.
+
 Never reuse a threshold, deduction, tariff, allowance, depreciation rule, or rate across years unless that exact year is verified from an official source.
 
 ## Supported Taxpayer Situations
@@ -97,7 +99,7 @@ The schema is extensible for future taxpayer situations.
 
 1. **Validate the tax year.** Run `scripts/validate_tax_year.py <year>`. `structure_valid: true` means the year is supported in `config.yaml` and its rule files load; preparation may proceed. `status` is `VERIFIED` only when every loaded rule has complete official provenance; with skeleton rule files it is `UNVERIFIED` (exit code 2) and no final field can be `VERIFIED` yet.
 2. **Inventory documents.** `scripts/classify_document.py` gives a keyword-based suggestion that is always `REVIEW_REQUIRED`. Read the document yourself and confirm or correct the class. Completion criterion: every document is categorized or marked `UNKNOWN`.
-3. **Extract values conservatively.** Every extracted value must preserve document, page, field, original text, extracted value, confidence, tax year, and status. Confidence below `config.yaml` `extraction.review_confidence_threshold` stays `REVIEW_REQUIRED`.
+3. **Extract values conservatively.** Keep taxpayer documents and filled workpapers outside the repository and installed skill directory. Every extracted value must preserve document, page, field, original text, extracted value, confidence, tax year, and status. Confidence below `config.yaml` `extraction.review_confidence_threshold` stays `REVIEW_REQUIRED`.
 4. **Build taxpayer workpapers.** Use `taxpayer/personal.yaml` and `taxpayer/sole-proprietorship.yaml` as templates and `taxpayer/schema.yaml` as the contract for `final_fields` (the scripts read JSON: convert the filled workpaper to JSON). Completion criterion: no final field lacks provenance or status.
 5. **Build sole-proprietorship totals.** Use `scripts/build_profit_loss.py`. Every revenue/expense transaction needs `amount_basis` (`gross` or `net`) and a `document`; VAT registration must be stated explicitly, and only the `effective` VAT method is supported (saldo/flat-rate method: `REVIEW_REQUIRED`, handle manually). Output totals are provisional: `profit_or_loss` and `deductible_expenses_total` are always `null`; `provisional_profit_or_loss` appears only when every expense has an explicit `business_percentage` and there are no capital assets awaiting depreciation.
 6. **Classify expenses.** `scripts/classify_expense.py` suggests a class by whole-word keywords (EN/IT) and never returns `VERIFIED` or a `deductible_amount`. Use your own reading of the receipt for the final class; ambiguous or mixed expenses need an explicit business percentage and reasoning.
@@ -146,6 +148,7 @@ Tax rules and numeric values must come from authoritative sources only:
 - Raccolta delle leggi del Canton Ticino;
 - ESTV / AFC;
 - Swiss federal legislation / Fedlex.
+- BSV / UFAS for federal social-insurance matters relevant to the workpaper.
 
 Blogs, accounting-company articles, forums, and AI-generated content can help discovery only. They are never authoritative provenance for a `VERIFIED` numeric rule.
 
@@ -164,6 +167,8 @@ source:
   retrieved_at: "YYYY-MM-DD"
   verified: true
 ```
+
+For a source without page numbers, use `article` (for legislation) or `section` (for a web page) instead of `page`. At least one of `page`, `article`, or `section` must identify the exact passage. For federal rules the accepted official domains are `estv.admin.ch`, `fedlex.admin.ch`, and `bsv.admin.ch`; the BSV domain is for social-insurance sources, not a substitute for tax-law authority.
 
 If provenance cannot be established, status must not be `VERIFIED`.
 

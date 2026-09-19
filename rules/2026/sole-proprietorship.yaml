@@ -1,5 +1,5 @@
 tax_year: 2026
-jurisdiction: CH-TI
+jurisdictions: [CH, CH-TI]
 status: UNVERIFIED
 rules: []
 expense_classifications:
@@ -9,4 +9,4 @@ expense_classifications:
   - CAPITAL_ASSET
   - REVIEW_REQUIRED
 notes:
-  - Sole-proprietorship treatment must be verified per rule and year before any numeric rule is marked VERIFIED.
+  - Federal and Ticino sole-proprietorship rules must each be verified for this year before use.

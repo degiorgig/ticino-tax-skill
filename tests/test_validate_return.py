@@ -2,9 +2,11 @@ import csv
 import shutil
 import unittest
 
+import yaml
+
 from scripts.generate_etax_checklist import generate_rows, write_checklist
 from scripts.validate_return import validate_return
-from tests.helpers import make_root, verified_field
+from tests.helpers import FAKE_RULE, make_root, verified_field
 
 
 class ValidateReturnTests(unittest.TestCase):
@@ -29,6 +31,18 @@ class ValidateReturnTests(unittest.TestCase):
         result = validate_return(workpaper, 2025)  # real repo: skeleton rules only
         self.assertEqual(result["status"], "REVIEW_REQUIRED")
         self.assertIn("Rule must resolve to the requested year's local rule catalog", [e["message"] for e in result["errors"]])
+
+    def test_federal_sole_proprietorship_rule_can_support_a_federal_field(self):
+        path = self.root / "rules" / "2025" / "sole-proprietorship.yaml"
+        book = yaml.safe_load(path.read_text(encoding="utf-8"))
+        book["rules"] = [{**FAKE_RULE, "rule_id": "TEST_CH_SOLE", "jurisdiction": "CH",
+                          "source": {**FAKE_RULE["source"], "url": "https://www.fedlex.admin.ch/eli/cc/example/it",
+                                     "page": None, "article": "art. 18 LIFD"}}]
+        path.write_text(yaml.safe_dump(book), encoding="utf-8")
+        field = verified_field(jurisdiction="CH", rule={"rule_id": "TEST_CH_SOLE"})
+        field["calculation"]["rule_ids"] = ["TEST_CH_SOLE"]
+        result = validate_return({"tax_year": 2025, "final_fields": [field]}, 2025, self.root)
+        self.assertEqual(result["status"], "VERIFIED", result["errors"])
 
     def test_arithmetic_and_confidence_are_checked(self):
         bad_sum = verified_field()

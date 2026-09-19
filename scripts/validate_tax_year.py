@@ -25,15 +25,22 @@ def rule_provenance_errors(rule: dict[str, Any], year: int) -> list[str]:
     source = rule.get("source")
     if not isinstance(source, dict):
         return errors + ["Missing official source provenance"]
-    for key in ("authority", "document", "url", "page", "retrieved_at"):
+    for key in ("authority", "document", "url", "retrieved_at"):
         if is_missing(source.get(key)):
             errors.append(f"Official source missing {key}")
+    page = source.get("page")
+    has_page = (isinstance(page, str) and bool(page.strip())) or (type(page) is int and page > 0)
+    has_text_locator = any(isinstance(source.get(key), str) and source[key].strip()
+                           for key in ("article", "section"))
+    if not (has_page or has_text_locator):
+        errors.append("Official source needs a page, article or section locator")
     if source.get("verified") is not True:
         errors.append("Official source has not been reviewed")
     try:
         url = urlsplit(str(source.get("url", "")))
         host = url.hostname or ""
-        domains = ("ti.ch",) if rule.get("jurisdiction") == "CH-TI" else ("estv.admin.ch", "fedlex.admin.ch")
+        domains = ("ti.ch",) if rule.get("jurisdiction") == "CH-TI" else (
+            "estv.admin.ch", "fedlex.admin.ch", "bsv.admin.ch")
         if url.scheme != "https" or url.username or not any(host == d or host.endswith("." + d) for d in domains):
             errors.append("Official source URL does not match the jurisdiction's authority")
         date.fromisoformat(str(source.get("retrieved_at", "")))
@@ -44,10 +51,11 @@ def rule_provenance_errors(rule: dict[str, Any], year: int) -> list[str]:
 
 def load_rule_catalog(year: int, root: Path = ROOT) -> dict[str, dict[str, Any]]:
     catalog: dict[str, dict[str, Any]] = {}
-    jurisdictions = dict(zip(REQUIRED_RULE_FILES, ("CH-TI", "CH", "CH-TI", "CH")))
-    for filename, jurisdiction in jurisdictions.items():
+    jurisdictions = dict(zip(REQUIRED_RULE_FILES, (("CH-TI",), ("CH",), ("CH", "CH-TI"), ("CH",))))
+    for filename, allowed_jurisdictions in jurisdictions.items():
         book = load_yaml(root / "rules" / str(year) / filename)
-        if book.get("tax_year") != year or book.get("jurisdiction") != jurisdiction:
+        declared_jurisdictions = book.get("jurisdictions", [book.get("jurisdiction")])
+        if book.get("tax_year") != year or declared_jurisdictions != list(allowed_jurisdictions):
             raise ValueError(f"Rule file year/jurisdiction mismatch: {filename}")
         if not isinstance(book.get("rules"), list):
             raise ValueError(f"rules must be a list: {filename}")
@@ -56,7 +64,7 @@ def load_rule_catalog(year: int, root: Path = ROOT) -> dict[str, dict[str, Any]]
                 raise ValueError(f"Rule must have a nonempty rule_id: {filename}")
             if rule["rule_id"] in catalog:
                 raise ValueError(f"Duplicate rule_id: {rule['rule_id']}")
-            if rule.get("tax_year") != year or rule.get("jurisdiction") != jurisdiction:
+            if rule.get("tax_year") != year or rule.get("jurisdiction") not in allowed_jurisdictions:
                 raise ValueError(f"Rule year/jurisdiction mismatch: {rule['rule_id']}")
             catalog[rule["rule_id"]] = rule
     return catalog

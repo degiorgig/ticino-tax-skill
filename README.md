@@ -8,7 +8,7 @@ This repository is **not** a tax filing system and does **not** replace the offi
 
 Tax documents contain highly sensitive personal and financial data. **Never commit personal tax documents, bank statements, salary certificates, insurance certificates, mortgage statements, medical bills, business invoices, credentials, keys, or secrets.**
 
-The `.gitignore` excludes `data/`, `.env`, private keys, credential files, virtual environments, caches, and macOS metadata. Keep real documents local and encrypted according to your security requirements.
+Keep taxpayer documents and filled workpapers **outside this repository and the installed skill directory**, in a private location of your choice. Point the scripts to those external paths. The `.gitignore` still excludes `data/` as a safeguard, but ignored files inside a skill directory can still be copied by packaging or backup tools. It also excludes `.env`, private keys, credential files, virtual environments, caches, and macOS metadata.
 
 ## First-Iteration Scope
 
@@ -83,6 +83,6 @@ final tax field
 
 ## Rule Files
 
-Rule skeletons live in `rules/<year>/`. A verified numeric rule must include official provenance from sources such as Ticino tax authorities, ESTV/AFC, Swiss federal law/Fedlex, or the official Ticino legal collection.
+Rule skeletons live in `rules/<year>/`. A verified numeric rule must include official provenance from sources such as Ticino tax authorities, ESTV/AFC, Swiss federal law/Fedlex, BSV/UFAS for social-insurance matters, or the official Ticino legal collection. Cite a specific page, article, or web-page section. `sole-proprietorship.yaml` accepts both `CH` and `CH-TI` rules; every rule retains its own jurisdiction.
 
 Do not use blogs, accounting-company pages, forums, or AI-generated content as authoritative sources.
