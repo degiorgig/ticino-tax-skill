@@ -1,0 +1,6 @@
+tax_year: 2025
+jurisdiction: CH
+status: UNVERIFIED
+rules: []
+notes:
+  - Numeric federal/IFD tax rules are intentionally not populated until verified against official ESTV/AFC or Fedlex sources for tax year 2025.

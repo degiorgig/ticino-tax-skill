@@ -1,0 +1,12 @@
+tax_year: 2025
+jurisdiction: CH-TI
+status: UNVERIFIED
+rules: []
+expense_classifications:
+  - BUSINESS_EXPENSE
+  - PRIVATE_EXPENSE
+  - MIXED
+  - CAPITAL_ASSET
+  - REVIEW_REQUIRED
+notes:
+  - Sole-proprietorship treatment must be verified per rule and year before any numeric rule is marked VERIFIED.

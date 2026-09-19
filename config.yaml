@@ -1,0 +1,21 @@
+skill:
+  name: ticino-tax
+  version: 0.1.0
+  default_currency: CHF
+  supported_tax_years:
+    - 2025
+    - 2026
+  supported_jurisdictions:
+    - CH
+    - CH-TI
+  extraction:
+    review_confidence_threshold: 0.85
+  comparison:
+    significant_variance_percent: 20
+    significant_variance_absolute_chf: 1000
+  rules:
+    require_tax_year: true
+    require_official_source_for_verified_numeric_rules: true
+  output:
+    checklist_format: csv
+    official_submission_replacement: false

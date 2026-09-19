@@ -1,0 +1,43 @@
+tax_year: null
+status: REVIEW_REQUIRED
+business:
+  name: null
+  uid: null
+  activity_description: null
+  accounting_basis: REVIEW_REQUIRED
+  vat_registration_status: REVIEW_REQUIRED
+  vat_accounting_method: REVIEW_REQUIRED
+revenue: []
+business_expenses: []
+accounts_receivable: []
+accounts_payable: []
+business_bank_accounts: []
+inventory: []
+business_assets: []
+private_assets: []
+depreciation: []
+social_security_contributions: []
+vehicle_expenses: []
+travel_expenses: []
+training: []
+software: []
+hardware: []
+telecommunications: []
+office_costs: []
+home_office_related_costs: []
+professional_services: []
+insurance: []
+mixed_private_business_expenses: []
+capital_expenditure: []
+vat:
+  output_vat: []
+  input_vat: []
+  vat_payable: null
+  vat_receivable: null
+profit_loss:
+  revenue_total: null
+  deductible_expenses_total: null
+  capital_assets_total: null
+  profit_or_loss: null
+  vat_treatment: REVIEW_REQUIRED
+review_items: []

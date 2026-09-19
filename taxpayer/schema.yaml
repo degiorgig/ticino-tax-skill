@@ -1,0 +1,51 @@
+# Contract enforced by scripts/validate_return.py. Keep the two in sync: a workpaper built
+# from this file must be able to pass validation once every item is reviewed.
+schema_version: 0.2.0
+required:
+  - tax_year
+  - taxpayer
+  - jurisdictions
+  - final_fields
+status_values:
+  - VERIFIED
+  - UNVERIFIED
+  - REVIEW_REQUIRED
+  - MISSING_DOCUMENT
+  - NOT_APPLICABLE
+jurisdictions:
+  federal: CH
+  cantonal: CH-TI
+  municipality:
+    code: null
+    name: null
+traceability:
+  # One entry of workpaper.final_fields. A VERIFIED entry needs every key below.
+  # NOT_APPLICABLE needs notes and no value. Any other status is reported as unresolved.
+  final_field:
+    section: null
+    field: null
+    value: null
+    tax_year: null
+    jurisdiction: null            # CH or CH-TI, must equal the rule's jurisdiction
+    status: REVIEW_REQUIRED
+    rule:
+      rule_id: null               # must exist in rules/<tax_year>/*.yaml with VERIFIED provenance
+    source_document: []           # list of source_document_value entries
+    calculation:
+      calculation_id: null
+      status: REVIEW_REQUIRED
+      tax_year: null
+      rule_ids: []                # exactly [rule.rule_id]
+      operation: null             # identity | sum | difference
+      inputs: []                  # [{document, field}] each resolving to a source_document entry
+      result: null                # must equal value
+    notes: []
+source_document_value:
+  document: null
+  page: null                      # positive integer
+  field: null
+  original_text: null
+  extracted_value: null
+  confidence: null                # >= config.yaml extraction.review_confidence_threshold
+  tax_year: null
+  status: REVIEW_REQUIRED

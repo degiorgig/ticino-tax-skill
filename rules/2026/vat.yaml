@@ -1,0 +1,14 @@
+tax_year: 2026
+jurisdiction: CH
+status: UNVERIFIED
+separate_from_income_tax: true
+rules: []
+models:
+  vat_registration_status: REVIEW_REQUIRED
+  vat_accounting_method: REVIEW_REQUIRED
+  output_vat: []
+  input_vat: []
+  vat_payable: null
+  vat_receivable: null
+notes:
+  - VAT is a separate concern. Do not assume VAT registration. Do not mix VAT with income-tax profit without explicit accounting treatment.

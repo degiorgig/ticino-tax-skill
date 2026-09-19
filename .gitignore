@@ -1,0 +1,11 @@
+data/
+.env
+*.key
+*.pem
+credentials*
+secrets*
+__pycache__/
+.venv/
+.DS_Store
+.pytest_cache/
+*.pyc

@@ -1,0 +1,9 @@
+tax_year: 2025
+jurisdiction: CH-TI
+status: UNVERIFIED
+rules: []
+municipality:
+  status: REVIEW_REQUIRED
+  rules: []
+notes:
+  - Numeric Ticino tax rules are intentionally not populated until verified against official Ticino sources for tax year 2025.

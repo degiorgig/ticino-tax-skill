@@ -1,0 +1,44 @@
+authoritative_sources:
+  - authority: Repubblica e Cantone Ticino
+    role: Cantonal authority for Ticino tax information and forms
+    url: https://www4.ti.ch/dfe/dc/dichiarazione/imposte
+    allowed_for_verified_rules: true
+    notes: Use specific official documents/pages as rule provenance, not this registry entry alone.
+  - authority: Divisione delle contribuzioni Ticino
+    role: Ticino tax administration
+    url: https://www4.ti.ch/dfe/dc
+    allowed_for_verified_rules: true
+    notes: Prefer published instructions, forms, circulars, and legal references for the exact tax year.
+  - authority: Raccolta delle leggi del Canton Ticino
+    role: Official Ticino legal collection
+    url: https://www3.ti.ch/CAN/RLeggi/public/index.php/raccolta-leggi
+    allowed_for_verified_rules: true
+    notes: Use exact law/article/version references where applicable.
+  - authority: ESTV / AFC
+    role: Swiss Federal Tax Administration
+    url: https://www.estv.admin.ch/estv/it/home.html
+    allowed_for_verified_rules: true
+    notes: Use exact official tax-year document or circular for federal rules.
+  - authority: Fedlex
+    role: Swiss federal legislation
+    url: https://www.fedlex.admin.ch/
+    allowed_for_verified_rules: true
+    notes: Use exact SR number, article, version date, and tax year relevance.
+disallowed_as_authoritative:
+  - blogs
+  - accounting-company articles
+  - forums
+  - AI-generated content
+  - unsourced summaries
+provenance_template:
+  rule_id: null
+  tax_year: null
+  jurisdiction: null
+  status: UNVERIFIED
+  source:
+    authority: null
+    document: null
+    url: null
+    page: null
+    retrieved_at: null
+    verified: false
