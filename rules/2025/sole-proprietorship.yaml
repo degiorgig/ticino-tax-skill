@@ -8,5 +8,8 @@ expense_classifications:
   - MIXED
   - CAPITAL_ASSET
   - REVIEW_REQUIRED
+pending_rules:
+  - topic: open
+    reason: "AVS/AI/IPG contributions of the self-employed, depreciation rates (ESTV Merkblatt A 1995), accessory vs main self-employment, private share of vehicle: not researched yet."
 notes:
   - Federal and Ticino sole-proprietorship rules must each be verified for this year before use.

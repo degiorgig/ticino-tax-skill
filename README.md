@@ -21,7 +21,7 @@ Created in this iteration:
 - Python utilities for validation, document classification, expense classification, profit/loss aggregation, previous-year comparison, return validation, and eTax checklist generation;
 - tests for core behaviors.
 
-Numeric tax rules are intentionally **not populated** until official sources are verified and recorded rule by rule.
+Since then a first set of 2025 deduction limits has been added to `rules/2025/federal.yaml` and `rules/2025/ticino.yaml`, each with official provenance. Everything else (tariffs, municipal multipliers, real estate, sole proprietorship, VAT, all of 2026) is intentionally **not populated** until official sources are verified and recorded rule by rule; each file lists its gaps under `pending_rules`.
 
 ## Supported Taxpayers
 
@@ -57,7 +57,11 @@ python3 scripts/generate_etax_checklist.py workpaper.json --tax-year 2025 --outp
 python3 -m unittest discover -s tests -t .
 ```
 
-Exit code 2 from `validate_tax_year`, `validate_return`, or `generate_etax_checklist` means "not fully verified", not a crash. With the current skeleton rule files this is the expected result.
+Exit code 2 from `validate_tax_year`, `validate_return`, or `generate_etax_checklist` means "not fully verified", not a crash. While any rule file still lists gaps, exit code 2 from `validate_tax_year` is the expected result.
+
+## Worked Example
+
+`examples/fictional-2025/` is an invented household that exercises the whole workflow (`tests/test_end_to_end.py`). All data in it is fictional.
 
 ## Status Values
 

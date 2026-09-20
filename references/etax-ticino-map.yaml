@@ -1,0 +1,26 @@
+# Section numbers ("cifre") of the Ticino return for DEDUCTIONS, as printed in the official
+# "Tabella di confronto delle deduzioni ... 2025". Use them for the checklist `section` column.
+tax_year: 2025
+source:
+  authority: Divisione delle contribuzioni Ticino
+  document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+  url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+  page: 1
+  retrieved_at: "2026-09-19"
+deduction_sections:
+  "5.5": Sostanza immobiliare - spese di gestione e manutenzione di immobili
+  "9": Spese professionali dei dipendenti
+  "10": Contributi di legge (AVS/AI/IPG/AD, AINP, 2° pilastro)
+  "11": Contributi alla previdenza individuale vincolata (3° pilastro A)
+  "12": Oneri assicurativi e interessi di capitali a risparmio
+  "13": Spese titoli e interessi passivi
+  "14": Alimenti, oneri permanenti e rendite vitalizie
+  "15": Altre deduzioni (disabilità, partiti politici, formazione, doppio reddito coniugi)
+  "20": Cure prestate da terzi a figli di età inferiore ai 14 anni
+  "22": Deduzioni supplementari (spese per malattia e infortunio)
+  "24": Liberalità ad enti di pubblica utilità
+  "25": Deduzioni sociali (figli a carico, figli agli studi, persone bisognose a carico)
+  "27": Quota esente per beneficiari AVS-AI
+pending:
+  - Income and wealth sections (cifre 1-8, 26, 28+) and the eTax module names are NOT mapped - read them from
+    Istruzioni_PF_2025.pdf and the eTax forms before using them; do not guess section numbers.

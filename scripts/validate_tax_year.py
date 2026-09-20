@@ -84,13 +84,26 @@ def validate_tax_year(tax_year: int | str, root: Path = ROOT) -> dict[str, Any]:
         return result
     result["structure_valid"] = True
     result["status"] = "UNVERIFIED"
-    if not rules:
-        result["errors"].append("No verified rules: year contains only skeleton files")
     for rule_id, rule in rules.items():
         result["errors"].extend(f"{rule_id}: {message}" for message in rule_provenance_errors(rule, year))
-    if not result["errors"]:
+    result["rule_count"] = len(rules)
+    result["rule_provenance_valid"] = bool(rules) and not result["errors"]
+    open_topics = []
+    for filename in REQUIRED_RULE_FILES:
+        book = load_yaml(root / "rules" / str(year) / filename)
+        if not book["rules"]:
+            open_topics.append(f"{filename}: no rules")
+        pending = book.get("pending_rules") or []
+        open_topics.extend(f"{filename}: {item.get('topic', item) if isinstance(item, dict) else item}" for item in pending)
+    result["open_topics"] = open_topics
+    result["coverage_complete"] = not open_topics
+    if not rules:
+        result["errors"].append("No verified rules: year contains only skeleton files")
+    # VERIFIED is a green light for the whole year, so it needs clean provenance AND no documented gap.
+    if result["rule_provenance_valid"] and result["coverage_complete"]:
         result["status"] = "VERIFIED"
-    result["verification_scope"] = "loaded rule provenance only; not tax coverage or legal correctness"
+    result["verification_scope"] = ("status covers rule provenance and the gaps declared in the rule files; "
+                                    "it is never a statement of legal correctness")
     return result
 
 
