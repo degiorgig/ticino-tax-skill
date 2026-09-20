@@ -9,10 +9,20 @@ from tests.helpers import FAKE_RULE, make_root
 
 class ValidateTaxYearTests(unittest.TestCase):
     def test_skeleton_year_is_structurally_valid_but_unverified(self):
-        result = validate_tax_year(2025)
+        result = validate_tax_year(2026)  # 2026 rule files are still skeletons
         self.assertTrue(result["structure_valid"])
         self.assertEqual(result["status"], "UNVERIFIED")
-        self.assertEqual(require_tax_year("2025"), 2025)
+        self.assertEqual(require_tax_year("2026"), 2026)
+
+    def test_shipped_2025_rules_have_complete_provenance(self):
+        from scripts.validate_tax_year import load_rule_catalog, rule_provenance_errors
+        catalog = load_rule_catalog(2025)
+        self.assertTrue(catalog)
+        for rule_id, rule in catalog.items():
+            self.assertEqual(rule_provenance_errors(rule, 2025), [], rule_id)
+            self.assertTrue(rule_id.startswith("CH_2025_" if rule["jurisdiction"] == "CH" else "TI_2025_"), rule_id)
+            self.assertTrue(rule.get("values"), rule_id)
+        self.assertEqual(validate_tax_year(2025)["status"], "VERIFIED")
 
     def test_year_with_verified_rule_provenance(self):
         root = make_root()

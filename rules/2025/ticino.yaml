@@ -1,9 +1,397 @@
 tax_year: 2025
 jurisdiction: CH-TI
-status: UNVERIFIED
-rules: []
+status: VERIFIED
+rules:
+- rule_id: TI_2025_TRAVEL_PRIVATE_VEHICLE_RATES
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: Flat rates for private vehicle commuting (cantonal tax)
+  currency: CHF
+  values:
+    car_per_km: 0.6
+    motorcycle_per_km: 0.4
+    bicycle_moped_max_per_year: 700
+  etax_cifra: '9'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 9, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+  notes:
+  - The table shows the 3'300 overall cap for IFD only ('solo IFD').
+- rule_id: TI_2025_MEALS_AWAY
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: Additional meal costs / weekly stay (cantonal tax)
+  currency: CHF
+  values:
+    one_meal_per_day: 15
+    one_meal_max_per_year: 3200
+    one_meal_with_canteen_per_day: 7.5
+    one_meal_with_canteen_max_per_year: 1600
+    shift_work_max_per_year: 3200
+    weekly_stay_two_meals_per_day: 30
+    weekly_stay_max_per_year: 6400
+    weekly_stay_with_canteen_per_day: 22.5
+    weekly_stay_with_canteen_max_per_year: 4800
+  etax_cifra: '9'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 9, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+- rule_id: TI_2025_OTHER_PROFESSIONAL_COSTS
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: Flat deduction for other professional costs (cantonal tax)
+  currency: CHF
+  values:
+    flat_general: 3000
+    flat_if_under_50_percent_or_under_6_months: 1500
+  etax_cifra: '9'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 9, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+  notes:
+  - Or actual costs ('o effettive').
+- rule_id: TI_2025_SIDE_EMPLOYMENT_COSTS
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: Flat deduction for dependent side employment (cantonal tax)
+  currency: CHF
+  values:
+    flat: 800
+  etax_cifra: '9'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 9, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+  notes:
+  - Or actual costs. Dependent side employment only, not self-employed activity.
+- rule_id: TI_2025_PILLAR_3A_MAX
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: Maximum deductible pillar 3a contributions
+  currency: CHF
+  values:
+    with_pillar2_max: 7258
+    without_pillar2_percent_of_income: 20
+    without_pillar2_max: 36288
+  etax_cifra: '11'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 11, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+  notes:
+  - The same figures appear in the table's IFD column.
+- rule_id: TI_2025_INSURANCE_PREMIUMS_MAX
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: Maximum deduction for insurance premiums and savings interest (cantonal tax)
+  currency: CHF
+  values:
+    married_general: 10900
+    married_without_pillar2_and_3a: 15400
+    others_general: 5500
+    others_without_pillar2_and_3a: 7800
+    per_child_or_supported_person: 1200
+  etax_cifra: '12'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 12, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+- rule_id: TI_2025_PRIVATE_DEBT_INTEREST_MAX
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: Cap on deductible private debt interest
+  currency: CHF
+  values:
+    gross_asset_income_plus: 50000
+  etax_cifra: '13'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 13, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+  notes:
+  - Cap = gross income from movable and immovable assets + CHF 50'000. Same wording in the IFD column.
+- rule_id: TI_2025_SECURITIES_ADMIN_COSTS
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: Securities administration costs (cantonal tax)
+  currency: CHF
+  values:
+    flat_per_mille_of_securities: 3
+  etax_cifra: '13'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 13, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+  notes:
+  - '''effettive / 3 per mille''; IFD column: actual costs only. Base of the per-mille rate not stated in the table.'
+- rule_id: TI_2025_TWO_EARNER_DEDUCTION
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: Deduction from married couples' employment income (cantonal tax)
+  currency: CHF
+  values:
+    max: 8100
+  etax_cifra: '15'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 15, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+- rule_id: TI_2025_TRAINING_COSTS_MAX
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: Maximum deduction for job-related education and training (cantonal tax)
+  currency: CHF
+  values:
+    max: 10700
+  etax_cifra: '15'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 15, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+- rule_id: TI_2025_POLITICAL_PARTIES_MAX
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: Maximum deduction for payments to political parties (cantonal tax)
+  currency: CHF
+  values:
+    max: 10600
+  etax_cifra: '15'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 15, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+- rule_id: TI_2025_CHILDCARE_MAX
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: Maximum deduction for third-party childcare, children under 14 (cantonal tax)
+  currency: CHF
+  values:
+    max: 26200
+  etax_cifra: '20'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 20, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+- rule_id: TI_2025_MEDICAL_COSTS_THRESHOLD
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: 'Illness and accident costs: non-deductible share'
+  currency: CHF
+  values:
+    threshold_percent_of_intermediate_net_income: 5
+  etax_cifra: '22'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 22, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+  notes:
+  - Same wording in the IFD column.
+- rule_id: TI_2025_DONATIONS_MAX
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: Donations to public-benefit entities
+  currency: CHF
+  values:
+    max_percent_of_intermediate_net_income: 20
+  etax_cifra: '24'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 24, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+  notes:
+  - Same wording in the IFD column. Minimum amount not stated in the table.
+- rule_id: TI_2025_CHILD_DEDUCTION
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: Social deduction per dependent child (cantonal tax), situation at 31.12.2025
+  currency: CHF
+  values:
+    per_child: 11500
+  etax_cifra: '25'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 25, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+- rule_id: TI_2025_CHILD_IN_EDUCATION_DEDUCTION
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: Additional deduction per child in education (cantonal tax)
+  currency: CHF
+  values:
+    min: 1300
+    max: 13900
+  etax_cifra: '25'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 25, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+  notes:
+  - Range only; the scale by type of study is in the Istruzioni 2025, not transcribed.
+- rule_id: TI_2025_SUPPORTED_PERSON_DEDUCTION
+  tax_year: 2025
+  jurisdiction: CH-TI
+  status: VERIFIED
+  description: Deduction per supported person in need (cantonal tax, only if resident in Switzerland)
+  currency: CHF
+  values:
+    min: 5900
+    max: 11500
+  etax_cifra: '25'
+  source:
+    authority: Divisione delle contribuzioni Ticino
+    document: Tabella di confronto delle deduzioni per l'imposta cantonale e per l'imposta federale diretta 2025
+      (Tabella_deduzioni_PF_2025.pdf)
+    url: https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Tabella_deduzioni_PF_2025.pdf
+    page: 1
+    section: cifra 25, colonna imposta cantonale
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
 municipality:
   status: REVIEW_REQUIRED
   rules: []
+pending_rules:
+- topic: Deduction 2'800 'Dal reddito dei coniugi/partner registrati' (cifra 15)
+  reason: Column (IC vs IFD) could not be determined reliably from the extracted text; the federal married deduction
+    of 2'800 is covered by CH_2025_MARRIED_DEDUCTION.
+- topic: Property maintenance flat rate 10% / 20% (cifra 5.5)
+  reason: Table only says '10-20% o effettive'; building-age criterion must be read from Istruzioni_PF_2025.pdf
+    (document too large to fetch in this session).
+- topic: Cantonal tariff, municipal multiplier, valore locativo
+  reason: Not researched; municipality unknown.
 notes:
-  - Numeric Ticino tax rules are intentionally not populated until verified against official Ticino sources for tax year 2025.
+- 'Only values read directly in the cited official document are listed under rules. pending_rules are NOT usable:
+  they document gaps.'
+- File status reflects provenance of the listed rules only, not completeness of tax coverage.

@@ -10,5 +10,8 @@ models:
   input_vat: []
   vat_payable: null
   vat_receivable: null
+pending_rules:
+  - topic: open
+    reason: "Turnover threshold for VAT liability (Art. 10 MWSTG) and rates in force in 2025: not read from an ESTV/Fedlex source in this session."
 notes:
   - VAT is a separate concern. Do not assume VAT registration. Do not mix VAT with income-tax profit without explicit accounting treatment.

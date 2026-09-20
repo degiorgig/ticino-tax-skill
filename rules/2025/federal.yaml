@@ -1,6 +1,352 @@
 tax_year: 2025
 jurisdiction: CH
-status: UNVERIFIED
-rules: []
+status: VERIFIED
+rules:
+- rule_id: CH_2025_TRAVEL_COSTS_MAX
+  tax_year: 2025
+  jurisdiction: CH
+  status: VERIFIED
+  description: Maximum deduction for commuting costs (employees)
+  currency: CHF
+  values:
+    max_per_year: 3300
+  legal_basis: Art. 26 Abs. 1 Bst. a DBG
+  etax_cifra: '9'
+  source:
+    authority: ESTV / AFC
+    document: 'Rundschreiben 2-210-D-2024-d, 22.08.2024: Berufskostenpauschalen und Naturalbezüge 2025 / Ausgleich
+      der Folgen der kalten Progression bei der direkten Bundessteuer für das Steuerjahr 2025'
+    url: https://www.estv.admin.ch/dam/de/sd-web/zkUbFt0fCQiy/dbst-rs-2-210-d-2024-de.pdf
+    page: 1
+    section: 1.1 Pauschalabzüge für Berufskosten
+    retrieved_at: '2026-09-19'
+    verified: true
+  cross_check: Form 9/14 (Steuerperiode 2025) line 2.3 'Zwischentotal max. CHF 3300'. Same value in the IFD column
+    of the Ticino 'Tabella deduzioni PF 2025' (ti.ch).
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+- rule_id: CH_2025_TRAVEL_PRIVATE_VEHICLE_RATES
+  tax_year: 2025
+  jurisdiction: CH
+  status: VERIFIED
+  description: Flat rates for private vehicle commuting
+  currency: CHF
+  values:
+    car_per_km: 0.7
+    motorcycle_white_plate_per_km: 0.4
+    bicycle_moped_per_year: 700
+  legal_basis: Berufskostenverordnung SR 642.118.1, Anhang
+  etax_cifra: '9'
+  source:
+    authority: ESTV / AFC
+    document: 'Formular 9/14 605.040.15d (Steuerperiode 2025): Berufskosten, Schuldenverzeichnis'
+    url: https://www.estv.admin.ch/dam/de/sd-web/bmvo2HhSNchN/dbst-form-09-14-2025-de.pdf
+    page: 1
+    section: Ziffern 2.2 und 2.3
+    retrieved_at: '2026-09-19'
+    verified: true
+  cross_check: Same value in the IFD column of the Ticino 'Tabella deduzioni PF 2025' (ti.ch).
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+  notes:
+  - Private vehicle costs are only deductible where public transport is not reasonable; the condition is not encoded
+    here.
+- rule_id: CH_2025_MEALS_AWAY
+  tax_year: 2025
+  jurisdiction: CH
+  status: VERIFIED
+  description: Additional meal costs away from home / shift work
+  currency: CHF
+  values:
+    full_per_day: 15
+    full_max_per_year: 3200
+    reduced_per_day: 7.5
+    reduced_max_per_year: 1600
+  legal_basis: Berufskostenverordnung SR 642.118.1, Anhang
+  etax_cifra: '9'
+  source:
+    authority: ESTV / AFC
+    document: 'Formular 9/14 605.040.15d (Steuerperiode 2025): Berufskosten, Schuldenverzeichnis'
+    url: https://www.estv.admin.ch/dam/de/sd-web/bmvo2HhSNchN/dbst-form-09-14-2025-de.pdf
+    page: 1
+    section: Ziffern 3.1 und 3.2
+    retrieved_at: '2026-09-19'
+    verified: true
+  cross_check: Same value in the IFD column of the Ticino 'Tabella deduzioni PF 2025' (ti.ch).
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+  notes:
+  - Reduced rate applies with canteen or employer contribution.
+- rule_id: CH_2025_OTHER_PROFESSIONAL_COSTS
+  tax_year: 2025
+  jurisdiction: CH
+  status: VERIFIED
+  description: Flat deduction for other professional costs (main employment)
+  currency: CHF
+  values:
+    percent_of_net_salary: 3
+    min: 2000
+    max: 4000
+  legal_basis: Berufskostenverordnung SR 642.118.1, Anhang
+  etax_cifra: '9'
+  source:
+    authority: ESTV / AFC
+    document: 'Formular 9/14 605.040.15d (Steuerperiode 2025): Berufskosten, Schuldenverzeichnis'
+    url: https://www.estv.admin.ch/dam/de/sd-web/bmvo2HhSNchN/dbst-form-09-14-2025-de.pdf
+    page: 1
+    section: Ziffer 4
+    retrieved_at: '2026-09-19'
+    verified: true
+  cross_check: Same value in the IFD column of the Ticino 'Tabella deduzioni PF 2025' (ti.ch).
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+  notes:
+  - Actual costs may be claimed instead if proven.
+- rule_id: CH_2025_SIDE_EMPLOYMENT_COSTS
+  tax_year: 2025
+  jurisdiction: CH
+  status: VERIFIED
+  description: Flat deduction for professional costs of dependent side employment
+  currency: CHF
+  values:
+    percent_of_side_income: 20
+    min: 800
+    max: 2400
+  legal_basis: Berufskostenverordnung SR 642.118.1, Anhang
+  etax_cifra: '9'
+  source:
+    authority: ESTV / AFC
+    document: 'Formular 9/14 605.040.15d (Steuerperiode 2025): Berufskosten, Schuldenverzeichnis'
+    url: https://www.estv.admin.ch/dam/de/sd-web/bmvo2HhSNchN/dbst-form-09-14-2025-de.pdf
+    page: 1
+    section: Ziffer 6
+    retrieved_at: '2026-09-19'
+    verified: true
+  cross_check: Same value in the IFD column of the Ticino 'Tabella deduzioni PF 2025' (ti.ch).
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+  notes:
+  - Applies to DEPENDENT side employment (Nebenerwerb), not to self-employed activity.
+- rule_id: CH_2025_INSURANCE_PREMIUMS_MAX
+  tax_year: 2025
+  jurisdiction: CH
+  status: VERIFIED
+  description: Maximum deduction for insurance premiums and savings interest
+  currency: CHF
+  values:
+    married_with_pillar2_or_3a: 3700
+    married_without_pillar2_and_3a: 5550
+    others_with_pillar2_or_3a: 1800
+    others_without_pillar2_and_3a: 2700
+    per_child: 700
+    per_supported_person: 700
+  legal_basis: Art. 33 Abs. 1 Bst. g und Abs. 1bis DBG
+  etax_cifra: '12'
+  source:
+    authority: ESTV / AFC
+    document: 'Rundschreiben 2-210-D-2024-d, 22.08.2024: Berufskostenpauschalen und Naturalbezüge 2025 / Ausgleich
+      der Folgen der kalten Progression bei der direkten Bundessteuer für das Steuerjahr 2025'
+    url: https://www.estv.admin.ch/dam/de/sd-web/zkUbFt0fCQiy/dbst-rs-2-210-d-2024-de.pdf
+    page: 2
+    section: Tabelle 'Abzüge', Spalte Steuerjahr 2025
+    retrieved_at: '2026-09-19'
+    verified: true
+  cross_check: Same value in the IFD column of the Ticino 'Tabella deduzioni PF 2025' (ti.ch).
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+- rule_id: CH_2025_TWO_EARNER_DEDUCTION
+  tax_year: 2025
+  jurisdiction: CH
+  status: VERIFIED
+  description: Two-earner deduction for married couples
+  currency: CHF
+  values:
+    min: 8600
+    max: 14100
+  legal_basis: Art. 33 Abs. 2 DBG
+  etax_cifra: '15'
+  source:
+    authority: ESTV / AFC
+    document: 'Rundschreiben 2-210-D-2024-d, 22.08.2024: Berufskostenpauschalen und Naturalbezüge 2025 / Ausgleich
+      der Folgen der kalten Progression bei der direkten Bundessteuer für das Steuerjahr 2025'
+    url: https://www.estv.admin.ch/dam/de/sd-web/zkUbFt0fCQiy/dbst-rs-2-210-d-2024-de.pdf
+    page: 2
+    section: Tabelle 'Abzüge', Spalte Steuerjahr 2025
+    retrieved_at: '2026-09-19'
+    verified: true
+  cross_check: 'Ticino table IFD column: ''50% minore dei redditi min. 8''600 max. 14''100''.'
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+  notes:
+  - The 50%-of-lower-income formula is stated in the cross-check source and Art. 33 Abs. 2 DBG, not in the circular;
+    verify the computation basis before use.
+- rule_id: CH_2025_CHILDCARE_MAX
+  tax_year: 2025
+  jurisdiction: CH
+  status: VERIFIED
+  description: Maximum deduction for third-party childcare
+  currency: CHF
+  values:
+    max_per_child: 25800
+  legal_basis: Art. 33 Abs. 3 DBG
+  etax_cifra: '20'
+  source:
+    authority: ESTV / AFC
+    document: 'Rundschreiben 2-210-D-2024-d, 22.08.2024: Berufskostenpauschalen und Naturalbezüge 2025 / Ausgleich
+      der Folgen der kalten Progression bei der direkten Bundessteuer für das Steuerjahr 2025'
+    url: https://www.estv.admin.ch/dam/de/sd-web/zkUbFt0fCQiy/dbst-rs-2-210-d-2024-de.pdf
+    page: 2
+    section: Tabelle 'Abzüge', Spalte Steuerjahr 2025
+    retrieved_at: '2026-09-19'
+    verified: true
+  cross_check: Same value in the IFD column of the Ticino 'Tabella deduzioni PF 2025' (ti.ch).
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+  notes:
+  - 'Ticino table: children under 14.'
+- rule_id: CH_2025_CHILD_DEDUCTION
+  tax_year: 2025
+  jurisdiction: CH
+  status: VERIFIED
+  description: Social deduction per dependent child
+  currency: CHF
+  values:
+    per_child: 6800
+  legal_basis: Art. 35 Abs. 1 Bst. a DBG
+  etax_cifra: '25'
+  source:
+    authority: ESTV / AFC
+    document: 'Rundschreiben 2-210-D-2024-d, 22.08.2024: Berufskostenpauschalen und Naturalbezüge 2025 / Ausgleich
+      der Folgen der kalten Progression bei der direkten Bundessteuer für das Steuerjahr 2025'
+    url: https://www.estv.admin.ch/dam/de/sd-web/zkUbFt0fCQiy/dbst-rs-2-210-d-2024-de.pdf
+    page: 2
+    section: Tabelle 'Abzüge', Spalte Steuerjahr 2025
+    retrieved_at: '2026-09-19'
+    verified: true
+  cross_check: Same value in the IFD column of the Ticino 'Tabella deduzioni PF 2025' (ti.ch).
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+- rule_id: CH_2025_SUPPORT_DEDUCTION
+  tax_year: 2025
+  jurisdiction: CH
+  status: VERIFIED
+  description: Social deduction per supported person
+  currency: CHF
+  values:
+    per_person: 6800
+  legal_basis: Art. 35 Abs. 1 Bst. b DBG
+  etax_cifra: '25'
+  source:
+    authority: ESTV / AFC
+    document: 'Rundschreiben 2-210-D-2024-d, 22.08.2024: Berufskostenpauschalen und Naturalbezüge 2025 / Ausgleich
+      der Folgen der kalten Progression bei der direkten Bundessteuer für das Steuerjahr 2025'
+    url: https://www.estv.admin.ch/dam/de/sd-web/zkUbFt0fCQiy/dbst-rs-2-210-d-2024-de.pdf
+    page: 2
+    section: Tabelle 'Abzüge', Spalte Steuerjahr 2025
+    retrieved_at: '2026-09-19'
+    verified: true
+  cross_check: Same value in the IFD column of the Ticino 'Tabella deduzioni PF 2025' (ti.ch).
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+- rule_id: CH_2025_MARRIED_DEDUCTION
+  tax_year: 2025
+  jurisdiction: CH
+  status: VERIFIED
+  description: Social deduction for married couples
+  currency: CHF
+  values:
+    amount: 2800
+  legal_basis: Art. 35 Abs. 1 Bst. c DBG
+  etax_cifra: '15'
+  source:
+    authority: ESTV / AFC
+    document: 'Rundschreiben 2-210-D-2024-d, 22.08.2024: Berufskostenpauschalen und Naturalbezüge 2025 / Ausgleich
+      der Folgen der kalten Progression bei der direkten Bundessteuer für das Steuerjahr 2025'
+    url: https://www.estv.admin.ch/dam/de/sd-web/zkUbFt0fCQiy/dbst-rs-2-210-d-2024-de.pdf
+    page: 2
+    section: Tabelle 'Abzüge', Spalte Steuerjahr 2025
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+- rule_id: CH_2025_TAX_CREDIT_PER_CHILD
+  tax_year: 2025
+  jurisdiction: CH
+  status: VERIFIED
+  description: Reduction of the tax amount per child (parental tariff)
+  currency: CHF
+  values:
+    per_child: 263
+  legal_basis: Art. 36 Abs. 2bis DBG
+  source:
+    authority: ESTV / AFC
+    document: 'Rundschreiben 2-210-D-2024-d, 22.08.2024: Berufskostenpauschalen und Naturalbezüge 2025 / Ausgleich
+      der Folgen der kalten Progression bei der direkten Bundessteuer für das Steuerjahr 2025'
+    url: https://www.estv.admin.ch/dam/de/sd-web/zkUbFt0fCQiy/dbst-rs-2-210-d-2024-de.pdf
+    page: 2
+    section: Tabelle 'Abzüge', Spalte Steuerjahr 2025
+    retrieved_at: '2026-09-19'
+    verified: true
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+- rule_id: CH_2025_TRAINING_COSTS_MAX
+  tax_year: 2025
+  jurisdiction: CH
+  status: VERIFIED
+  description: Maximum deduction for job-related education and training
+  currency: CHF
+  values:
+    max: 13000
+  legal_basis: Art. 33 Abs. 1 Bst. j DBG
+  etax_cifra: '15'
+  source:
+    authority: ESTV / AFC
+    document: 'Rundschreiben 2-210-D-2024-d, 22.08.2024: Berufskostenpauschalen und Naturalbezüge 2025 / Ausgleich
+      der Folgen der kalten Progression bei der direkten Bundessteuer für das Steuerjahr 2025'
+    url: https://www.estv.admin.ch/dam/de/sd-web/zkUbFt0fCQiy/dbst-rs-2-210-d-2024-de.pdf
+    page: 2
+    section: Tabelle 'Abzüge', Spalte Steuerjahr 2025
+    retrieved_at: '2026-09-19'
+    verified: true
+  cross_check: Same value in the IFD column of the Ticino 'Tabella deduzioni PF 2025' (ti.ch).
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+- rule_id: CH_2025_POLITICAL_PARTIES_MAX
+  tax_year: 2025
+  jurisdiction: CH
+  status: VERIFIED
+  description: Maximum deduction for contributions to political parties
+  currency: CHF
+  values:
+    max: 10600
+  legal_basis: Art. 33 Abs. 1 Bst. i DBG
+  etax_cifra: '15'
+  source:
+    authority: ESTV / AFC
+    document: 'Rundschreiben 2-210-D-2024-d, 22.08.2024: Berufskostenpauschalen und Naturalbezüge 2025 / Ausgleich
+      der Folgen der kalten Progression bei der direkten Bundessteuer für das Steuerjahr 2025'
+    url: https://www.estv.admin.ch/dam/de/sd-web/zkUbFt0fCQiy/dbst-rs-2-210-d-2024-de.pdf
+    page: 2
+    section: Tabelle 'Abzüge', Spalte Steuerjahr 2025
+    retrieved_at: '2026-09-19'
+    verified: true
+  cross_check: Same value in the IFD column of the Ticino 'Tabella deduzioni PF 2025' (ti.ch).
+  review: Extracted by Claude (AI) from the cited official document; read twice and cross-checked where noted. Human
+    spot-check against the URL recommended before filing.
+pending_rules:
+- topic: Pillar 3a maximum (IFD)
+  reason: Ticino official table shows 7'258 / 20% max 36'288 in the IFD column, but no ESTV/Fedlex/BSV document
+    stating the amounts for tax year 2025 could be read (ESTV page renders the figures dynamically; BSV page gives
+    no year). Use TI_2025_PILLAR_3A_MAX for the cantonal side; add the federal rule once an admin.ch source is cited.
+- topic: Medical costs threshold (5%) and donations (max 20%, min CHF 100) for IFD
+  reason: Seen only in the ti.ch table (IFD column); cite Art. 33 Abs. 1 Bst. h and Art. 33a DBG on Fedlex with
+    article locator.
+- topic: Tax tariff 2025 (Art. 36 DBG)
+  reason: Printed in Rundschreiben 2-210-D-2024-d pages 2-3; not transcribed (bracket table needs exact human-checked
+    transcription).
+- topic: Property maintenance flat rate (10% / 20%)
+  reason: Building-age criterion not read from a federal source.
 notes:
-  - Numeric federal/IFD tax rules are intentionally not populated until verified against official ESTV/AFC or Fedlex sources for tax year 2025.
+- 'Only values read directly in the cited official document are listed under rules. pending_rules are NOT usable:
+  they document gaps.'
+- File status reflects provenance of the listed rules only, not completeness of tax coverage.

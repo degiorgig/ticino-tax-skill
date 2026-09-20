@@ -189,7 +189,8 @@ Requires Python 3.10+ and PyYAML (`pip install -r requirements.txt`). Every comm
 
 ## Pitfalls
 
-- Rule files for 2025 and 2026 are skeletons in the first delivery. They intentionally contain no fabricated numeric limits.
+- `rules/2025/federal.yaml` and `rules/2025/ticino.yaml` contain a first set of deductions with official provenance (AI-extracted, see each rule's `review` note). Everything else (2026, sole proprietorship, VAT, tariffs, municipal multipliers, valore locativo, federal pillar 3a) is still a skeleton: check each file's `pending_rules` and never fill those gaps from memory.
+- A rule's `values` are limits or rates, not the taxpayer's deduction: the deductible amount still depends on conditions in the law and the official instructions.
 - A calculation that executes is not a verified tax result.
 - Previous-year returns are a completeness baseline only; never auto-copy values into the current year.
 - VAT is separate from income tax. Income-tax P&L must state whether amounts are gross, net, or otherwise adjusted for VAT.
