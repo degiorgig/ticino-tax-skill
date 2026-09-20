@@ -173,6 +173,11 @@ rules:
     per_unit_keys:
     - per_child
     - per_supported_person
+    base_key_conflicts:
+      married_without_pillar2_and_3a:
+      - pillar_3a
+      others_without_pillar2_and_3a:
+      - pillar_3a
   legal_basis: Art. 33 Abs. 1 Bst. g und Abs. 1bis DBG
   etax_cifra: '12'
   source:
@@ -416,4 +421,5 @@ notes:
 - File status reflects provenance of the listed rules only, not completeness of tax coverage.
 - 'application: how validate_return may apply a rule''s values. Rules without it cannot back a VERIFIED amount.
   Which base limit fits the taxpayer (e.g. with/without pillar 2) is a fact the validator cannot check: justify
-  it in the field notes.'
+  it in the field notes. base_key_conflicts is the part it can check: a base limit is refused when the workpaper
+  also claims one of the listed fields.'

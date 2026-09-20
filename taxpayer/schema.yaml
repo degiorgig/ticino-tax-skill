@@ -43,8 +43,12 @@ traceability:
       tax_year: null
       rule_ids: []                # exactly [rule.rule_id]
       operation: null             # identity | sum | difference | rule_value_times | percent_clamped
-      cap: []                     # [{key, times}] -> min(result, sum of rule.values[key] x times); REQUIRED with
-                                  # identity/sum/difference when the rule defines a limit
+      cap: []                     # [{key: <base limit>}, {key: <per-unit limit>, times_input: {document, field}}]
+                                  # -> min(result, one base limit + per-unit limits x a documented whole number).
+                                  # Allowed keys come from the rule's `application`; a literal `times` is rejected.
+                                  # REQUIRED with identity/sum/difference when the rule defines a limit
+      # The three operations below take their keys from the rule's `application`; a workpaper may repeat
+      # them but cannot change them.
       value_key: null             # rule_value_times: single whole-number input x rule.values[value_key]
       percent_key: null           # percent_clamped: sum(inputs) x rule.values[percent_key] / 100,
       min_key: null               #   raised to rule.values[min_key] and
@@ -56,7 +60,7 @@ source_document_value:
   document: null
   page: null                      # positive integer
   field: null
-  original_text: null
+  original_text: null             # literal quote; must contain extracted_value as printed (98'000.00, 98000.-, ...)
   extracted_value: null
   confidence: null                # >= config.yaml extraction.review_confidence_threshold
   tax_year: null

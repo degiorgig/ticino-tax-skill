@@ -91,7 +91,7 @@ class RuleLimitTests(unittest.TestCase):
 
     def test_amount_above_the_legal_maximum_is_rejected(self):
         field = self.workpaper["final_fields"][0]  # pillar 3a, max 7'258
-        field["source_document"][0]["extracted_value"] = 9000
+        field["source_document"][0].update(extracted_value=9000, original_text="Versamenti 2025: CHF 9'000.00")
         field["value"] = field["calculation"]["result"] = 9000
         self.assertIn("Calculation result does not match sources or final amount", self.messages())
         field["value"] = field["calculation"]["result"] = 7258
@@ -112,7 +112,7 @@ class RuleLimitTests(unittest.TestCase):
 
     def test_percent_clamped_applies_minimum_and_maximum(self):
         field = copy.deepcopy(self.workpaper["final_fields"][5])
-        field["source_document"][0]["extracted_value"] = 200000  # 3% = 6'000 -> max 4'000
+        field["source_document"][0].update(extracted_value=200000, original_text="11. Salario netto 200'000.00")  # 3% = 6'000 -> max 4'000
         field["value"] = field["calculation"]["result"] = 4000
         self.workpaper["final_fields"][5] = field
         self.assertEqual(self.messages(), [])
@@ -139,7 +139,7 @@ class RuleLimitTests(unittest.TestCase):
 
     def test_percent_clamped_limits_cannot_be_dropped_or_swapped(self):
         field = self.workpaper["final_fields"][5]  # 3% of net salary, min 2'000, max 4'000
-        field["source_document"][0]["extracted_value"] = 200000
+        field["source_document"][0].update(extracted_value=200000, original_text="11. Salario netto 200'000.00")
         field["value"] = field["calculation"]["result"] = 6000
         del field["calculation"]["max_key"]
         self.assertIn("Calculation result does not match sources or final amount", self.messages())

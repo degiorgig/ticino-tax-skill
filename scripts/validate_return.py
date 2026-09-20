@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 from decimal import Decimal
 from pathlib import Path
 from typing import Any
@@ -14,6 +15,15 @@ except ImportError:
 
 
 LIMIT_MARKERS = ("max", "min", "percent", "per_", "flat", "amount", "plus")
+OPEN_ITEM = "open_item"  # error code: the item's own status already says it is unresolved
+# 98'000.00, 98’000.00, 98 000.00, 98000.- and 98000; a number glued to a previous "." (dates) is skipped.
+QUOTED_NUMBER = re.compile(r"(?<![\d.])(\d{1,3}(?:['’\u00a0 ]\d{3})+|\d+)(?:\.(\d{1,2})(?!\d))?")
+
+
+def _quoted_numbers(text: str) -> set[Decimal]:
+    """Amounts literally printed in a quote. The apostrophe is a thousands separator, never a decimal point."""
+    return {Decimal(str(money(re.sub(r"\D", "", whole) + "." + (cents or "0"))))
+            for whole, cents in QUOTED_NUMBER.findall(text)}
 
 
 def _rule_value(rule: dict[str, Any] | None, key: Any) -> Decimal:
@@ -45,11 +55,13 @@ def _whole_number(value: Decimal, what: str) -> Decimal:
     return value
 
 
-def _cap_total(rule: dict[str, Any] | None, cap: Any, source_values: dict[tuple[str, str], Decimal], field_name: Any) -> Decimal:
+def _cap_total(rule: dict[str, Any] | None, cap: Any, source_values: dict[tuple[str, str], Decimal], field_name: Any,
+               claimed_fields: set[str]) -> Decimal:
     """cap: [{"key": base}, {"key": per-unit, "times_input": {document, field}}].
 
     Exactly one base limit (when the rule has any) plus per-unit limits whose multiplier is a documented
-    source value of this field. A literal multiplier is never accepted.
+    source value of this field. A literal multiplier is never accepted. A base limit the rule marks as
+    incompatible with another field (base_key_conflicts) is refused when the workpaper claims that field.
     """
     application = _application(rule, "cap", field_name)
     base_keys = application.get("base_keys") or []
@@ -67,6 +79,9 @@ def _cap_total(rule: dict[str, Any] | None, cap: Any, source_values: dict[tuple[
         if key in base_keys:
             if set(part) != {"key"}:
                 raise ValueError("A base limit applies once; it takes no multiplier")
+            for other in (application.get("base_key_conflicts") or {}).get(key) or []:
+                if other in claimed_fields:
+                    raise ValueError(f"Base limit {key!r} conflicts with the {other!r} field claimed in this workpaper")
             total += _rule_value(rule, key)
         elif key in unit_keys:
             if "times" in part:
@@ -82,6 +97,10 @@ def _cap_total(rule: dict[str, Any] | None, cap: Any, source_values: dict[tuple[
 
 
 def _has_limit(rule: dict[str, Any] | None) -> bool:
+    """The rule's declared application decides; key names are only a fallback for rules without one."""
+    application = rule.get("application") if isinstance(rule, dict) else None
+    if isinstance(application, dict) and application.get("operation") == "cap":
+        return True
     values = rule.get("values") if isinstance(rule, dict) else None
     return isinstance(values, dict) and any(marker in key for key in values for marker in LIMIT_MARKERS)
 
@@ -89,8 +108,8 @@ def _has_limit(rule: dict[str, Any] | None) -> bool:
 def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path = ROOT) -> dict[str, Any]:
     errors: list[dict[str, Any]] = []
 
-    def error(path: str, message: str) -> None:
-        errors.append({"field": path, "status": "REVIEW_REQUIRED", "message": message})
+    def error(path: str, message: str, code: str | None = None) -> None:
+        errors.append({"field": path, "status": "REVIEW_REQUIRED", "message": message, **({"code": code} if code else {})})
 
     result = {"tax_year": tax_year, "status": "REVIEW_REQUIRED", "errors": errors,
               "verification_scope": "recorded provenance and supported arithmetic; not legal correctness or completeness of tax coverage"}
@@ -117,7 +136,7 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
     else:
         for index, item in enumerate(reviews):
             if not isinstance(item, dict) or item.get("status") not in ("VERIFIED", "NOT_APPLICABLE"):
-                error(f"review_items[{index}]", "Unresolved review item")
+                error(f"review_items[{index}]", "Unresolved review item", OPEN_ITEM)
 
     people: set[str] = set()
     taxpayers = workpaper.get("taxpayers")
@@ -126,6 +145,8 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
                 or any(not isinstance(t, dict) or not isinstance(t.get("id"), str) or not t["id"].strip() for t in taxpayers)
                 or len({t["id"] for t in taxpayers}) != len(taxpayers)):
             error("taxpayers", "taxpayers must be a list of objects with unique non-empty ids")
+        elif any(t["id"] != t["id"].strip() for t in taxpayers):
+            error("taxpayers", "taxpayer ids must not have leading or trailing whitespace")
         else:
             people = {t["id"] for t in taxpayers} | {"HOUSEHOLD"}
 
@@ -133,6 +154,11 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
     if not isinstance(fields, list) or not fields:
         error("final_fields", "At least one final field is required")
         return result
+    # Fields that carry an amount, whatever their status: an open pillar 3a claim still rules out the
+    # "no pillar 3a" limits elsewhere.
+    claimed_fields = {f["field"] for f in fields if isinstance(f, dict) and isinstance(f.get("field"), str)
+                      and f.get("status") != "NOT_APPLICABLE" and not is_missing(f.get("value")) and f.get("value") != 0}
+    seen: set[tuple[str, str, str]] = set()
     for idx, field in enumerate(fields):
         path = f"final_fields[{idx}]"
         if not isinstance(field, dict):
@@ -147,7 +173,7 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
                 error(path, "NOT_APPLICABLE requires an explanation and no amount")
             continue
         if status != "VERIFIED":
-            error(path, f"Unresolved field: {status}")
+            error(path, f"Unresolved field: {status}", OPEN_ITEM)
             continue
         for required in ("section", "field", "value", "calculation", "rule", "source_document"):
             if is_missing(field.get(required)):
@@ -159,6 +185,10 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
         jurisdiction = field.get("jurisdiction")
         if jurisdiction not in ("CH", "CH-TI"):
             error(path, "Missing or unsupported final field jurisdiction")
+        claim = (str(field.get("person")), str(jurisdiction), str(field.get("field")))
+        if claim in seen:
+            error(path, "Same person, jurisdiction and field claimed twice: combine the sources in one final field")
+        seen.add(claim)
 
         reference = field.get("rule")
         reference = reference if isinstance(reference, dict) else {"rule_id": reference}
@@ -198,6 +228,8 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
                 continue
             try:
                 value = Decimal(str(money(source.get("extracted_value"))))
+                if abs(value) not in _quoted_numbers(source["original_text"]):
+                    error(path, "Source original_text does not contain the extracted value")
                 key = (source["document"], source["field"])
                 if key in source_values:
                     error(path, "Duplicate source document/field reference")
@@ -249,7 +281,7 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
                 raise ValueError("Unsupported operation or input count; manual review required")
             if operation in ("identity", "sum", "difference"):
                 if calculation.get("cap") is not None:
-                    computed = min(computed, _cap_total(rule, calculation["cap"], source_values, field.get("field")))
+                    computed = min(computed, _cap_total(rule, calculation["cap"], source_values, field.get("field"), claimed_fields))
                 elif _has_limit(rule):
                     raise ValueError("Rule defines a limit: the calculation must declare 'cap'")
             elif calculation.get("cap") is not None:

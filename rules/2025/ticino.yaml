@@ -153,6 +153,11 @@ rules:
     - others_without_pillar2_and_3a
     per_unit_keys:
     - per_child_or_supported_person
+    base_key_conflicts:
+      married_without_pillar2_and_3a:
+      - pillar_3a
+      others_without_pillar2_and_3a:
+      - pillar_3a
   etax_cifra: '12'
   source:
     authority: Divisione delle contribuzioni Ticino
@@ -420,9 +425,6 @@ municipality:
   status: REVIEW_REQUIRED
   rules: []
 pending_rules:
-- topic: Deduction 2'800 'Dal reddito dei coniugi/partner registrati' (cifra 15)
-  reason: Column (IC vs IFD) could not be determined reliably from the extracted text; the federal married deduction
-    of 2'800 is covered by CH_2025_MARRIED_DEDUCTION.
 - topic: Property maintenance flat rate 10% / 20% (cifra 5.5)
   reason: Table only says '10-20% o effettive'; building-age criterion must be read from Istruzioni_PF_2025.pdf
     (document too large to fetch in this session).
@@ -432,6 +434,9 @@ notes:
 - 'Only values read directly in the cited official document are listed under rules. pending_rules are NOT usable:
   they document gaps.'
 - File status reflects provenance of the listed rules only, not completeness of tax coverage.
+- 'The 2''800 line ''Dal reddito dei coniugi/partner registrati'' (cifra 15) is IFD only: in the rendered table the
+  cantonal column shows a dash. It is CH_2025_MARRIED_DEDUCTION, not a cantonal rule.'
 - 'application: how validate_return may apply a rule''s values. Rules without it cannot back a VERIFIED amount.
   Which base limit fits the taxpayer (e.g. with/without pillar 2) is a fact the validator cannot check: justify
-  it in the field notes.'
+  it in the field notes. base_key_conflicts is the part it can check: a base limit is refused when the workpaper
+  also claims one of the listed fields.'

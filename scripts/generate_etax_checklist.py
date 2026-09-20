@@ -10,11 +10,11 @@ from typing import Any, TextIO
 try:
     from .common import ROOT, SUPPORTED_STATUSES, load_json, parse_tax_year
     from .validate_tax_year import require_tax_year, load_rule_catalog
-    from .validate_return import validate_return
+    from .validate_return import OPEN_ITEM, validate_return
 except ImportError:
     from common import ROOT, SUPPORTED_STATUSES, load_json, parse_tax_year
     from validate_tax_year import require_tax_year, load_rule_catalog
-    from validate_return import validate_return
+    from validate_return import OPEN_ITEM, validate_return
 
 FIELDS = ["tax_year", "jurisdiction", "person", "section", "field", "value", "source_document", "calculation", "rule", "verification_status", "notes"]
 
@@ -64,7 +64,7 @@ def generate_rows(workpaper: dict[str, Any], *, tax_year: int | str, root: Path 
                 "notes": _stringify(item.get("notes", item.get("message", item.get("reason", "")))),
             })
     for error in validation["errors"]:
-        if error["message"].startswith("Unresolved"):
+        if error.get("code") == OPEN_ITEM:
             continue  # the item's own row already shows its open status
         row = dict.fromkeys(FIELDS, "")
         row.update(tax_year=str(year), section="Validation", field=error["field"],
