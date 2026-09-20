@@ -73,6 +73,33 @@ class QuoteTests(unittest.TestCase):
         self.assertEqual(self.messages(field), [])
 
 
+class NestedYearTests(unittest.TestCase):
+    """PR review: nested years are read like the top-level one, so "2025" equals 2025."""
+    def setUp(self):
+        self.root = make_root()
+        self.addCleanup(shutil.rmtree, self.root)
+
+    def messages(self, field):
+        return [e["message"] for e in validate_return({"tax_year": "2025", "final_fields": [field]}, "2025", self.root)["errors"]]
+
+    def test_year_written_as_text_is_accepted_everywhere(self):
+        field = verified_field(tax_year="2025")
+        field["source_document"][0]["tax_year"] = "2025"
+        field["calculation"]["tax_year"] = "2025"
+        self.assertEqual(self.messages(field), [])
+
+    def test_wrong_or_malformed_nested_year_is_still_rejected(self):
+        for bad in (2024, "2024", "25", True, None, 2025.0):
+            field = verified_field()
+            field["source_document"][0]["tax_year"] = bad
+            self.assertIn("Source document must be reviewed for the requested tax_year", self.messages(field), repr(bad))
+        field = verified_field(tax_year="2024")
+        self.assertIn("Final field tax_year mismatch", self.messages(field))
+        field = verified_field()
+        field["calculation"]["tax_year"] = "2024"
+        self.assertTrue(any("Calculation ID" in m for m in self.messages(field)))
+
+
 class CrossFieldTests(unittest.TestCase):
     def messages(self, workpaper, root=None):
         args = (workpaper, 2025) if root is None else (workpaper, 2025, root)
