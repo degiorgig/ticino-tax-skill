@@ -1,0 +1,461 @@
+{
+  "_notice": "FICTIONAL DATA - invented household used only to exercise the workflow.",
+  "tax_year": 2025,
+  "status": "REVIEW_REQUIRED",
+  "jurisdictions": {
+    "federal": "CH",
+    "cantonal": "CH-TI",
+    "municipality": {
+      "code": null,
+      "name": "Comunefittizio"
+    }
+  },
+  "taxpayers": [
+    {
+      "id": "P1",
+      "role": "taxpayer",
+      "name": "Anna Esempio"
+    },
+    {
+      "id": "P2",
+      "role": "spouse",
+      "name": "Luca Esempio"
+    }
+  ],
+  "taxpayer": {
+    "residency_canton": "TI",
+    "marital_status": "married",
+    "children_dependants": [
+      {
+        "name": "Sofia Esempio",
+        "birth_year": 2019
+      }
+    ]
+  },
+  "final_fields": [
+    {
+      "section": "11 Previdenza individuale vincolata",
+      "field": "pillar_3a",
+      "person": "P1",
+      "tax_year": 2025,
+      "jurisdiction": "CH-TI",
+      "status": "VERIFIED",
+      "value": 7000.0,
+      "rule": {
+        "rule_id": "TI_2025_PILLAR_3A_MAX"
+      },
+      "source_document": [
+        {
+          "document": "documents/attestato_pilastro_3a_anna_2025.txt",
+          "page": 1,
+          "field": "pillar_3a_contributions",
+          "original_text": "Versamenti 2025 alla previdenza individuale vincolata (pilastro 3a): CHF 7'000.00",
+          "extracted_value": 7000,
+          "confidence": 0.99,
+          "tax_year": 2025,
+          "status": "VERIFIED"
+        }
+      ],
+      "calculation": {
+        "calculation_id": "calc-pillar_3a-ch-ti-p1",
+        "status": "VERIFIED",
+        "tax_year": 2025,
+        "rule_ids": [
+          "TI_2025_PILLAR_3A_MAX"
+        ],
+        "inputs": [
+          {
+            "document": "documents/attestato_pilastro_3a_anna_2025.txt",
+            "field": "pillar_3a_contributions"
+          }
+        ],
+        "operation": "identity",
+        "cap": [
+          {
+            "key": "with_pillar2_max"
+          }
+        ],
+        "result": 7000.0
+      }
+    },
+    {
+      "section": "12 Oneri assicurativi",
+      "field": "insurance_premiums",
+      "person": "HOUSEHOLD",
+      "tax_year": 2025,
+      "jurisdiction": "CH-TI",
+      "status": "VERIFIED",
+      "value": 12100.0,
+      "rule": {
+        "rule_id": "TI_2025_INSURANCE_PREMIUMS_MAX"
+      },
+      "source_document": [
+        {
+          "document": "documents/premi_cassa_malati_famiglia_2025.txt",
+          "page": 1,
+          "field": "premiums_total",
+          "original_text": "totale famiglia: CHF 13'200.00",
+          "extracted_value": 13200,
+          "confidence": 0.99,
+          "tax_year": 2025,
+          "status": "VERIFIED"
+        }
+      ],
+      "calculation": {
+        "calculation_id": "calc-insurance_premiums-ch-ti-household",
+        "status": "VERIFIED",
+        "tax_year": 2025,
+        "rule_ids": [
+          "TI_2025_INSURANCE_PREMIUMS_MAX"
+        ],
+        "inputs": [
+          {
+            "document": "documents/premi_cassa_malati_famiglia_2025.txt",
+            "field": "premiums_total"
+          }
+        ],
+        "operation": "identity",
+        "cap": [
+          {
+            "key": "married_general"
+          },
+          {
+            "key": "per_child_or_supported_person",
+            "times": 1
+          }
+        ],
+        "result": 12100.0
+      },
+      "notes": [
+        "Paid 13'200; capped at 10'900 + 1 x 1'200."
+      ]
+    },
+    {
+      "section": "12 Oneri assicurativi",
+      "field": "insurance_premiums",
+      "person": "HOUSEHOLD",
+      "tax_year": 2025,
+      "jurisdiction": "CH",
+      "status": "VERIFIED",
+      "value": 4400.0,
+      "rule": {
+        "rule_id": "CH_2025_INSURANCE_PREMIUMS_MAX"
+      },
+      "source_document": [
+        {
+          "document": "documents/premi_cassa_malati_famiglia_2025.txt",
+          "page": 1,
+          "field": "premiums_total",
+          "original_text": "totale famiglia: CHF 13'200.00",
+          "extracted_value": 13200,
+          "confidence": 0.99,
+          "tax_year": 2025,
+          "status": "VERIFIED"
+        }
+      ],
+      "calculation": {
+        "calculation_id": "calc-insurance_premiums-ch-household",
+        "status": "VERIFIED",
+        "tax_year": 2025,
+        "rule_ids": [
+          "CH_2025_INSURANCE_PREMIUMS_MAX"
+        ],
+        "inputs": [
+          {
+            "document": "documents/premi_cassa_malati_famiglia_2025.txt",
+            "field": "premiums_total"
+          }
+        ],
+        "operation": "identity",
+        "cap": [
+          {
+            "key": "married_with_pillar2_or_3a"
+          },
+          {
+            "key": "per_child",
+            "times": 1
+          }
+        ],
+        "result": 4400.0
+      }
+    },
+    {
+      "section": "25 Deduzioni sociali",
+      "field": "child_deduction",
+      "person": "HOUSEHOLD",
+      "tax_year": 2025,
+      "jurisdiction": "CH-TI",
+      "status": "VERIFIED",
+      "value": 11500.0,
+      "rule": {
+        "rule_id": "TI_2025_CHILD_DEDUCTION"
+      },
+      "source_document": [
+        {
+          "document": "documents/libretto_famiglia.txt",
+          "page": 1,
+          "field": "dependent_children_count",
+          "original_text": "Figli a carico al 31.12.2025: 1",
+          "extracted_value": 1,
+          "confidence": 0.99,
+          "tax_year": 2025,
+          "status": "VERIFIED"
+        }
+      ],
+      "calculation": {
+        "calculation_id": "calc-child_deduction-ch-ti-household",
+        "status": "VERIFIED",
+        "tax_year": 2025,
+        "rule_ids": [
+          "TI_2025_CHILD_DEDUCTION"
+        ],
+        "inputs": [
+          {
+            "document": "documents/libretto_famiglia.txt",
+            "field": "dependent_children_count"
+          }
+        ],
+        "operation": "rule_value_times",
+        "value_key": "per_child",
+        "result": 11500.0
+      }
+    },
+    {
+      "section": "25 Deduzioni sociali",
+      "field": "child_deduction",
+      "person": "HOUSEHOLD",
+      "tax_year": 2025,
+      "jurisdiction": "CH",
+      "status": "VERIFIED",
+      "value": 6800.0,
+      "rule": {
+        "rule_id": "CH_2025_CHILD_DEDUCTION"
+      },
+      "source_document": [
+        {
+          "document": "documents/libretto_famiglia.txt",
+          "page": 1,
+          "field": "dependent_children_count",
+          "original_text": "Figli a carico al 31.12.2025: 1",
+          "extracted_value": 1,
+          "confidence": 0.99,
+          "tax_year": 2025,
+          "status": "VERIFIED"
+        }
+      ],
+      "calculation": {
+        "calculation_id": "calc-child_deduction-ch-household",
+        "status": "VERIFIED",
+        "tax_year": 2025,
+        "rule_ids": [
+          "CH_2025_CHILD_DEDUCTION"
+        ],
+        "inputs": [
+          {
+            "document": "documents/libretto_famiglia.txt",
+            "field": "dependent_children_count"
+          }
+        ],
+        "operation": "rule_value_times",
+        "value_key": "per_child",
+        "result": 6800.0
+      }
+    },
+    {
+      "section": "9 Spese professionali",
+      "field": "other_professional_costs",
+      "person": "P1",
+      "tax_year": 2025,
+      "jurisdiction": "CH",
+      "status": "VERIFIED",
+      "value": 2550.0,
+      "rule": {
+        "rule_id": "CH_2025_OTHER_PROFESSIONAL_COSTS"
+      },
+      "source_document": [
+        {
+          "document": "documents/certificato_salario_anna_2025.txt",
+          "page": 1,
+          "field": "net_salary_cifra_11",
+          "original_text": "11. Salario netto 85'000.00",
+          "extracted_value": 85000,
+          "confidence": 0.99,
+          "tax_year": 2025,
+          "status": "VERIFIED"
+        }
+      ],
+      "calculation": {
+        "calculation_id": "calc-other_professional_costs-ch-p1",
+        "status": "VERIFIED",
+        "tax_year": 2025,
+        "rule_ids": [
+          "CH_2025_OTHER_PROFESSIONAL_COSTS"
+        ],
+        "inputs": [
+          {
+            "document": "documents/certificato_salario_anna_2025.txt",
+            "field": "net_salary_cifra_11"
+          }
+        ],
+        "operation": "percent_clamped",
+        "percent_key": "percent_of_net_salary",
+        "min_key": "min",
+        "max_key": "max",
+        "result": 2550.0
+      }
+    },
+    {
+      "section": "9 Spese professionali",
+      "field": "other_professional_costs",
+      "person": "P2",
+      "tax_year": 2025,
+      "jurisdiction": "CH",
+      "status": "VERIFIED",
+      "value": 2000.0,
+      "rule": {
+        "rule_id": "CH_2025_OTHER_PROFESSIONAL_COSTS"
+      },
+      "source_document": [
+        {
+          "document": "documents/certificato_salario_luca_2025.txt",
+          "page": 1,
+          "field": "net_salary_cifra_11",
+          "original_text": "11. Salario netto 42'000.00",
+          "extracted_value": 42000,
+          "confidence": 0.99,
+          "tax_year": 2025,
+          "status": "VERIFIED"
+        }
+      ],
+      "calculation": {
+        "calculation_id": "calc-other_professional_costs-ch-p2",
+        "status": "VERIFIED",
+        "tax_year": 2025,
+        "rule_ids": [
+          "CH_2025_OTHER_PROFESSIONAL_COSTS"
+        ],
+        "inputs": [
+          {
+            "document": "documents/certificato_salario_luca_2025.txt",
+            "field": "net_salary_cifra_11"
+          }
+        ],
+        "operation": "percent_clamped",
+        "percent_key": "percent_of_net_salary",
+        "min_key": "min",
+        "max_key": "max",
+        "result": 2000.0
+      },
+      "notes": [
+        "3% = 1'260, raised to the minimum."
+      ]
+    },
+    {
+      "section": "Redditi",
+      "field": "employment_income_net",
+      "person": "P1",
+      "tax_year": 2025,
+      "jurisdiction": "CH-TI",
+      "status": "REVIEW_REQUIRED",
+      "value": 85000.0,
+      "source_document": [
+        {
+          "document": "documents/certificato_salario_anna_2025.txt",
+          "page": 1,
+          "field": "net_salary_cifra_11",
+          "original_text": "11. Salario netto 85'000.00",
+          "extracted_value": 85000,
+          "confidence": 0.99,
+          "tax_year": 2025,
+          "status": "VERIFIED"
+        }
+      ],
+      "notes": [
+        "No verified 2025 rule maps this document value to a return field yet (see pending_rules); transcribe manually after checking the official instructions."
+      ]
+    },
+    {
+      "section": "Redditi",
+      "field": "employment_income_net",
+      "person": "P2",
+      "tax_year": 2025,
+      "jurisdiction": "CH-TI",
+      "status": "REVIEW_REQUIRED",
+      "value": 42000.0,
+      "source_document": [
+        {
+          "document": "documents/certificato_salario_luca_2025.txt",
+          "page": 1,
+          "field": "net_salary_cifra_11",
+          "original_text": "11. Salario netto 42'000.00",
+          "extracted_value": 42000,
+          "confidence": 0.99,
+          "tax_year": 2025,
+          "status": "VERIFIED"
+        }
+      ],
+      "notes": [
+        "No verified 2025 rule maps this document value to a return field yet (see pending_rules); transcribe manually after checking the official instructions."
+      ]
+    },
+    {
+      "section": "Redditi",
+      "field": "self_employment_profit",
+      "person": "P2",
+      "tax_year": 2025,
+      "jurisdiction": "CH-TI",
+      "status": "REVIEW_REQUIRED",
+      "value": null,
+      "source_document": [],
+      "notes": [
+        "Depreciation of the laptop and the business share of the phone are unresolved; build_profit_loss gives no profit figure."
+      ]
+    },
+    {
+      "section": "9 Spese professionali",
+      "field": "other_professional_costs",
+      "person": "P1",
+      "tax_year": 2025,
+      "jurisdiction": "CH-TI",
+      "status": "REVIEW_REQUIRED",
+      "value": 3000.0,
+      "source_document": [],
+      "notes": [
+        "Flat amount exists (TI_2025_OTHER_PROFESSIONAL_COSTS) but the employment-level condition is not numeric evidence; confirm manually."
+      ]
+    },
+    {
+      "section": "15 Altre deduzioni",
+      "field": "two_earner_deduction",
+      "person": "HOUSEHOLD",
+      "tax_year": 2025,
+      "jurisdiction": "CH",
+      "status": "REVIEW_REQUIRED",
+      "value": null,
+      "source_document": [],
+      "notes": [
+        "Needs the lower of the two incomes after deductions; not a supported calculation."
+      ]
+    }
+  ],
+  "review_items": [
+    {
+      "type": "capital_asset",
+      "status": "REVIEW_REQUIRED",
+      "source_document": "documents/fattura_laptop_2025.txt",
+      "message": "Laptop 1'890: depreciation treatment for 2025 not verified."
+    },
+    {
+      "type": "mixed_expense",
+      "status": "REVIEW_REQUIRED",
+      "source_document": "documents/bolletta_telefono_2025.txt",
+      "message": "30% business share is the taxpayer's estimate; needs support."
+    },
+    {
+      "type": "unknown_document",
+      "status": "REVIEW_REQUIRED",
+      "source_document": "documents/scan_0042.txt",
+      "message": "Document could not be classified."
+    }
+  ]
+}

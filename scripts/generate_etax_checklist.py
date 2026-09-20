@@ -16,7 +16,7 @@ except ImportError:
     from validate_tax_year import require_tax_year, load_rule_catalog
     from validate_return import validate_return
 
-FIELDS = ["tax_year", "section", "field", "value", "source_document", "calculation", "rule", "verification_status", "notes"]
+FIELDS = ["tax_year", "jurisdiction", "person", "section", "field", "value", "source_document", "calculation", "rule", "verification_status", "notes"]
 
 
 def _stringify(value: Any) -> str:
@@ -54,7 +54,8 @@ def generate_rows(workpaper: dict[str, Any], *, tax_year: int | str, root: Path 
             if isinstance(rule_id, str) and rule_id in catalog:
                 rule = catalog[rule_id]
             rows.append({
-                "tax_year": str(year), "section": _stringify(item.get("section", "Review")),
+                "tax_year": str(year), "jurisdiction": _stringify(item.get("jurisdiction")),
+                "person": _stringify(item.get("person")), "section": _stringify(item.get("section", "Review")),
                 "field": _stringify(item.get("field", item.get("type", "review_item"))),
                 "value": _stringify(item.get("value")),
                 "source_document": _stringify(item.get("source_document")),
@@ -63,6 +64,8 @@ def generate_rows(workpaper: dict[str, Any], *, tax_year: int | str, root: Path 
                 "notes": _stringify(item.get("notes", item.get("message", item.get("reason", "")))),
             })
     for error in validation["errors"]:
+        if error["message"].startswith("Unresolved"):
+            continue  # the item's own row already shows its open status
         row = dict.fromkeys(FIELDS, "")
         row.update(tax_year=str(year), section="Validation", field=error["field"],
                    verification_status="REVIEW_REQUIRED", notes=error["message"])

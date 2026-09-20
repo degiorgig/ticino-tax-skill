@@ -1,6 +1,6 @@
 # Contract enforced by scripts/validate_return.py. Keep the two in sync: a workpaper built
 # from this file must be able to pass validation once every item is reviewed.
-schema_version: 0.2.0
+schema_version: 0.3.0
 required:
   - tax_year
   - taxpayer
@@ -12,6 +12,11 @@ status_values:
   - REVIEW_REQUIRED
   - MISSING_DOCUMENT
   - NOT_APPLICABLE
+taxpayers:                       # optional; once present every VERIFIED final field must name a person
+  - id: P1
+    role: taxpayer
+  - id: P2
+    role: spouse
 jurisdictions:
   federal: CH
   cantonal: CH-TI
@@ -24,6 +29,7 @@ traceability:
   final_field:
     section: null
     field: null
+    person: null                  # taxpayer id (P1, P2, ...) or HOUSEHOLD; required when workpaper.taxpayers is set
     value: null
     tax_year: null
     jurisdiction: null            # CH or CH-TI, must equal the rule's jurisdiction
@@ -36,7 +42,13 @@ traceability:
       status: REVIEW_REQUIRED
       tax_year: null
       rule_ids: []                # exactly [rule.rule_id]
-      operation: null             # identity | sum | difference
+      operation: null             # identity | sum | difference | rule_value_times | percent_clamped
+      cap: []                     # [{key, times}] -> min(result, sum of rule.values[key] x times); REQUIRED with
+                                  # identity/sum/difference when the rule defines a limit
+      value_key: null             # rule_value_times: single whole-number input x rule.values[value_key]
+      percent_key: null           # percent_clamped: sum(inputs) x rule.values[percent_key] / 100,
+      min_key: null               #   raised to rule.values[min_key] and
+      max_key: null               #   lowered to rule.values[max_key] when given
       inputs: []                  # [{document, field}] each resolving to a source_document entry
       result: null                # must equal value
     notes: []

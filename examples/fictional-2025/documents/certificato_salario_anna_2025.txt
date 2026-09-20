@@ -1,0 +1,11 @@
+CERTIFICATO DI SALARIO 2025 (Lohnausweis) - DOCUMENTO FITTIZIO
+Datore di lavoro: Esempio SA, Via Inventata 1, 6999 Comunefittizio
+Dipendente: Anna Esempio
+Periodo: 01.01.2025 - 31.12.2025
+1.  Salario                                   98'000.00
+8.  Salario lordo totale                      98'000.00
+9.  Contributi AVS/AI/IPG/AD/AINP              6'272.00
+10.1 Previdenza professionale, contributi ordinari  6'728.00
+11. Salario netto                             85'000.00
+F.  Trasporto gratuito dal domicilio al luogo di lavoro: no
+G.  Pasti in mensa / buoni pasto: no

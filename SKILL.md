@@ -101,19 +101,19 @@ Before running a script, use the directory containing this `SKILL.md` as the wor
 
 1. **Validate the tax year.** Run `scripts/validate_tax_year.py <year>`. `structure_valid: true` means the year is supported in `config.yaml` and its rule files load; preparation may proceed. `status` is `VERIFIED` only when every loaded rule has complete official provenance; with skeleton rule files it is `UNVERIFIED` (exit code 2) and no final field can be `VERIFIED` yet.
 2. **Inventory documents.** `scripts/classify_document.py` gives a keyword-based suggestion that is always `REVIEW_REQUIRED`. Read the document yourself and confirm or correct the class. Completion criterion: every document is categorized or marked `UNKNOWN`.
-3. **Extract values conservatively.** Keep taxpayer documents and filled workpapers outside the repository and installed skill directory. Every extracted value must preserve document, page, field, original text, extracted value, confidence, tax year, and status. Confidence below `config.yaml` `extraction.review_confidence_threshold` stays `REVIEW_REQUIRED`.
-4. **Build taxpayer workpapers.** Use `taxpayer/personal.yaml` and `taxpayer/sole-proprietorship.yaml` as templates and `taxpayer/schema.yaml` as the contract for `final_fields` (the scripts read JSON: convert the filled workpaper to JSON). Completion criterion: no final field lacks provenance or status.
-5. **Build sole-proprietorship totals.** Use `scripts/build_profit_loss.py`. Every revenue/expense transaction needs `amount_basis` (`gross` or `net`) and a `document`; VAT registration must be stated explicitly, and only the `effective` VAT method is supported (saldo/flat-rate method: `REVIEW_REQUIRED`, handle manually). Output totals are provisional: `profit_or_loss` and `deductible_expenses_total` are always `null`; `provisional_profit_or_loss` appears only when every expense has an explicit `business_percentage` and there are no capital assets awaiting depreciation.
+3. **Extract values conservatively.** Follow `references/extraction-guide.md` (what to read from each document class, number formats, attribution to a person). Keep taxpayer documents and filled workpapers outside the repository and installed skill directory. Every extracted value must preserve document, page, field, original text, extracted value, confidence, tax year, and status. Confidence below `config.yaml` `extraction.review_confidence_threshold` stays `REVIEW_REQUIRED`.
+4. **Build taxpayer workpapers.** For a married couple list `taxpayers` (P1, P2) and set `person` on every final field; do federal and cantonal amounts as separate fields. Use `taxpayer/personal.yaml` and `taxpayer/sole-proprietorship.yaml` as templates and `taxpayer/schema.yaml` as the contract for `final_fields` (the scripts read JSON: convert the filled workpaper to JSON). Completion criterion: no final field lacks provenance or status.
+5. **Build sole-proprietorship totals.** Use `scripts/build_profit_loss.py`. Every revenue/expense transaction needs `amount_basis` (`gross` or `net`) and a `document`; VAT registration must be stated explicitly, and only the `effective` VAT method is supported (saldo/flat-rate method: `REVIEW_REQUIRED`, handle manually). Output totals are provisional: `profit_or_loss` and `deductible_expenses_total` are always `null`; expense subtotals need an explicit `business_percentage` on every expense; with capital assets the output gives `provisional_profit_before_depreciation` and `depreciation_pending: true`, and `provisional_profit_or_loss` stays `null` until depreciation is decided.
 6. **Classify expenses.** `scripts/classify_expense.py` suggests a class by whole-word keywords (EN/IT) and never returns `VERIFIED` or a `deductible_amount`. Use your own reading of the receipt for the final class; ambiguous or mixed expenses need an explicit business percentage and reasoning.
 7. **Compare prior year.** Use `scripts/compare_previous_year.py`. Both JSON files need `tax_year` (baseline earlier than current). A category present in only one file is reported as missing data, not as an empty list.
-8. **Validate final workpaper.** Use `scripts/validate_return.py`. A `VERIFIED` field must reference a rule in `rules/<year>/` with verified provenance, reviewed source values, and a reproducible calculation (`identity`, `sum`, `difference`) whose result equals the value. Empty or unresolved workpapers are `REVIEW_REQUIRED`.
-9. **Generate eTax checklist.** Use `scripts/generate_etax_checklist.py`. A `VERIFIED` status survives only for fields that individually passed validation; validation errors are appended as `Validation` rows. Exit code 2 means open items remain.
+8. **Validate final workpaper.** Use `scripts/validate_return.py`. A `VERIFIED` field must reference a rule in `rules/<year>/` with verified provenance, reviewed source values, and a reproducible calculation whose result equals the value: `identity`/`sum`/`difference` (with a mandatory `cap` when the rule defines a limit), `rule_value_times` (count x rule amount) or `percent_clamped` (percentage with minimum/maximum). Amounts above a legal maximum are rejected. Anything else (thresholds on net income, two-earner formula, depreciation) stays `REVIEW_REQUIRED`. Empty or unresolved workpapers are `REVIEW_REQUIRED`.
+9. **Generate eTax checklist.** Use the section numbers in `references/etax-ticino-map.yaml` for deductions. Use `scripts/generate_etax_checklist.py`. A `VERIFIED` status survives only for fields that individually passed validation; validation errors are appended as `Validation` rows. Exit code 2 means open items remain.
 
 ## Document Classes
 
 Recognized document classes are:
 
-`SALARY_CERTIFICATE`, `BANK_STATEMENT`, `TAX_STATEMENT`, `SECURITIES_STATEMENT`, `PILLAR_3A_CERTIFICATE`, `MORTGAGE_STATEMENT`, `REAL_ESTATE_DOCUMENT`, `INSURANCE_CERTIFICATE`, `MEDICAL_EXPENSE`, `DONATION`, `BUSINESS_INVOICE`, `BUSINESS_RECEIPT`, `BUSINESS_BANK_STATEMENT`, `SOCIAL_SECURITY_CERTIFICATE`, `PREVIOUS_TAX_RETURN`, `UNKNOWN`.
+`SALARY_CERTIFICATE`, `BANK_STATEMENT`, `TAX_STATEMENT`, `SECURITIES_STATEMENT`, `PILLAR_3A_CERTIFICATE`, `MORTGAGE_STATEMENT`, `REAL_ESTATE_DOCUMENT`, `INSURANCE_CERTIFICATE`, `MEDICAL_EXPENSE`, `DONATION`, `BUSINESS_INVOICE`, `BUSINESS_RECEIPT`, `BUSINESS_BANK_STATEMENT`, `SOCIAL_SECURITY_CERTIFICATE`, `PREVIOUS_TAX_RETURN`, `FAMILY_STATUS_DOCUMENT`, `CHILDCARE_INVOICE`, `UNKNOWN`.
 
 Every extracted value should use this structure:
 
@@ -187,7 +187,13 @@ Requires Python 3.10+ and PyYAML (`pip install -r requirements.txt`). Every comm
 - Generate checklist: `python3 scripts/generate_etax_checklist.py workpaper.json --tax-year 2025 --output checklist.csv`
 - Tests: `python3 -m unittest discover -s tests -t .`
 
+## Worked Example
+
+`examples/fictional-2025/` contains an invented household (documents, transactions, workpaper, prior-year summary) that runs through all nine steps; `tests/test_end_to_end.py` executes it. Copy its structure, never its numbers.
+
 ## Pitfalls
+
+- Values transcribed from a document without a numeric rule (net salary, bank balances, self-employment profit) cannot be `VERIFIED` yet: no mapping rules to return fields have been verified. Report them as `REVIEW_REQUIRED` with their source values so the user can enter them manually.
 
 - `rules/2025/federal.yaml` and `rules/2025/ticino.yaml` contain a first set of deductions with official provenance (AI-extracted, see each rule's `review` note). Everything else (2026, sole proprietorship, VAT, tariffs, municipal multipliers, valore locativo, federal pillar 3a) is still a skeleton: check each file's `pending_rules` and never fill those gaps from memory.
 - A rule's `values` are limits or rates, not the taxpayer's deduction: the deductible amount still depends on conditions in the law and the official instructions.

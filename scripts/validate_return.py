@@ -13,6 +13,34 @@ except ImportError:
     from validate_tax_year import require_tax_year, load_rule_catalog, rule_provenance_errors
 
 
+LIMIT_MARKERS = ("max", "min", "percent", "per_", "flat", "amount", "plus")
+
+
+def _rule_value(rule: dict[str, Any] | None, key: Any) -> Decimal:
+    values = rule.get("values") if isinstance(rule, dict) else None
+    if not isinstance(key, str) or not isinstance(values, dict) or key not in values:
+        raise ValueError(f"Calculation references a value the rule does not define: {key!r}")
+    return Decimal(str(money(values[key])))
+
+
+def _cap_total(rule: dict[str, Any] | None, cap: Any) -> Decimal:
+    """cap: [{"key": <rule value key>, "times": <whole number, default 1>}, ...] -> sum of key x times."""
+    if not isinstance(cap, list) or not cap:
+        raise ValueError("cap must be a non-empty list of {key, times}")
+    total = Decimal(0)
+    for part in cap:
+        times = part.get("times", 1) if isinstance(part, dict) else None
+        if type(times) is not int or times < 0:
+            raise ValueError("cap entries need a rule value key and a non-negative whole 'times'")
+        total += _rule_value(rule, part.get("key")) * times
+    return total
+
+
+def _has_limit(rule: dict[str, Any] | None) -> bool:
+    values = rule.get("values") if isinstance(rule, dict) else None
+    return isinstance(values, dict) and any(marker in key for key in values for marker in LIMIT_MARKERS)
+
+
 def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path = ROOT) -> dict[str, Any]:
     errors: list[dict[str, Any]] = []
 
@@ -46,6 +74,16 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
             if not isinstance(item, dict) or item.get("status") not in ("VERIFIED", "NOT_APPLICABLE"):
                 error(f"review_items[{index}]", "Unresolved review item")
 
+    people: set[str] = set()
+    taxpayers = workpaper.get("taxpayers")
+    if taxpayers is not None:
+        if (not isinstance(taxpayers, list) or not taxpayers
+                or any(not isinstance(t, dict) or not isinstance(t.get("id"), str) or not t["id"].strip() for t in taxpayers)
+                or len({t["id"] for t in taxpayers}) != len(taxpayers)):
+            error("taxpayers", "taxpayers must be a list of objects with unique non-empty ids")
+        else:
+            people = {t["id"] for t in taxpayers} | {"HOUSEHOLD"}
+
     fields = workpaper.get("final_fields")
     if not isinstance(fields, list) or not fields:
         error("final_fields", "At least one final field is required")
@@ -71,6 +109,8 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
                 error(path, f"VERIFIED field missing {required}")
         if field.get("tax_year", year) != year:
             error(path, "Final field tax_year mismatch")
+        if people and field.get("person") not in people:
+            error(path, "Workpaper lists taxpayers: every final field needs 'person' (a taxpayer id or HOUSEHOLD)")
         jurisdiction = field.get("jurisdiction")
         if jurisdiction not in ("CH", "CH-TI"):
             error(path, "Missing or unsupported final field jurisdiction")
@@ -146,8 +186,24 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
                 computed = sum(values, Decimal(0))
             elif operation == "difference" and len(values) == 2:
                 computed = values[0] - values[1]
+            elif operation == "rule_value_times" and len(values) == 1:
+                # e.g. number of dependent children x per-child deduction
+                if values[0] < 0 or values[0] != values[0].to_integral_value():
+                    raise ValueError("rule_value_times needs a non-negative whole-number input")
+                computed = values[0] * _rule_value(rule, calculation.get("value_key"))
+            elif operation == "percent_clamped":
+                # e.g. 3% of net salary, min 2000, max 4000
+                computed = sum(values, Decimal(0)) * _rule_value(rule, calculation.get("percent_key")) / 100
+                if calculation.get("min_key") is not None:
+                    computed = max(computed, _rule_value(rule, calculation["min_key"]))
+                if calculation.get("max_key") is not None:
+                    computed = min(computed, _rule_value(rule, calculation["max_key"]))
             else:
                 raise ValueError("Unsupported operation or input count; manual review required")
+            if calculation.get("cap") is not None:
+                computed = min(computed, _cap_total(rule, calculation["cap"]))
+            elif operation in ("identity", "sum", "difference") and _has_limit(rule):
+                raise ValueError("Rule defines a limit: the calculation must declare 'cap' (or use a rule-value operation)")
             if money(computed) != money(field.get("value")) or money(computed) != money(calculation.get("result")):
                 raise ValueError("Calculation result does not match sources or final amount")
         except (ValueError, TypeError) as exc:

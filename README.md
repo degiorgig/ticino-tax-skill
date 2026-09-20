@@ -59,6 +59,10 @@ python3 -m unittest discover -s tests -t .
 
 Exit code 2 from `validate_tax_year`, `validate_return`, or `generate_etax_checklist` means "not fully verified", not a crash. With the current skeleton rule files this is the expected result.
 
+## Worked Example
+
+`examples/fictional-2025/` is an invented household that exercises the whole workflow (`tests/test_end_to_end.py`). All data in it is fictional.
+
 ## Status Values
 
 Use the following consistently:

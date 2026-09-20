@@ -1,0 +1,7 @@
+[
+  {"type": "revenue", "tax_year": 2025, "amount": 11500, "amount_basis": "gross", "description": "Realizzazione sito web", "document": "documents/fattura_cliente_001.txt"},
+  {"type": "revenue", "tax_year": 2025, "amount": 7000, "amount_basis": "gross", "description": "Manutenzione annuale sito", "document": "documents/fattura_cliente_002.txt"},
+  {"type": "expense", "tax_year": 2025, "amount": 348, "amount_basis": "gross", "description": "Abbonamento hosting e dominio", "business_percentage": 100, "document": "documents/ricevuta_hosting_2025.txt"},
+  {"type": "expense", "tax_year": 2025, "amount": 1890, "amount_basis": "gross", "description": "Laptop", "business_percentage": 100, "document": "documents/fattura_laptop_2025.txt"},
+  {"type": "expense", "tax_year": 2025, "amount": 960, "amount_basis": "gross", "description": "Abbonamento telefono e internet", "business_percentage": 30, "document": "documents/bolletta_telefono_2025.txt"}
+]

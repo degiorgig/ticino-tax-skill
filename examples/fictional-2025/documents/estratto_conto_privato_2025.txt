@@ -1,0 +1,4 @@
+ESTRATTO CONTO AL 31.12.2025 (bank statement) - DOCUMENTO FITTIZIO
+Banca Esempio, conto privato CH00 0000 0000 0000 0000 0, intestato ad Anna e Luca Esempio
+Saldo al 31.12.2025: CHF 24'310.55
+Interessi lordi 2025: CHF 12.40

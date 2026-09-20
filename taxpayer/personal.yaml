@@ -6,12 +6,19 @@ jurisdictions:
   municipality:
     code: null
     name: null
+taxpayers:            # married couples file jointly: attribute every income/deduction item to P1, P2 or HOUSEHOLD
+  - id: P1
+    role: taxpayer
+    name: null
+  - id: P2
+    role: spouse
+    name: null
 taxpayer:
   residency_canton: TI
   marital_status: null
   spouse: null
   children_dependants: []
-employment_income: []
+employment_income: []   # each item: {person: P1|P2, employer, source values...}
 bank_accounts: []
 securities: []
 real_estate: []

@@ -1,0 +1,25 @@
+{
+  "_notice": "FICTIONAL DATA",
+  "tax_year": 2024,
+  "bank_accounts": [
+    {
+      "iban": "CH00 0000 0000 0000 0000 0"
+    },
+    {
+      "iban": "CH00 1111 1111 1111 1111 1"
+    }
+  ],
+  "pillar_3a": [
+    {
+      "id": "3a-anna"
+    }
+  ],
+  "employment_income_total": 121000,
+  "business_revenue_total": 9000,
+  "deductions_present": [
+    "pillar_3a",
+    "insurance_premiums",
+    "child_deduction",
+    "childcare"
+  ]
+}

@@ -27,6 +27,7 @@ def build_profit_loss(
     classified_expenses = []
     incomplete = not transactions
     allocation_incomplete = False
+    depreciation_pending = False
 
     def review(reason: str, index: int | None = None) -> None:
         reviews.append({"transaction_index": index, "status": "REVIEW_REQUIRED", "reason": reason})
@@ -103,7 +104,9 @@ def build_profit_loss(
             elif classified["classification"] == "CAPITAL_ASSET":
                 if allocated is not None:
                     totals["capital_assets_total"] += Decimal(str(allocated)) - recoverable
-                allocation_incomplete = True  # annual depreciation is not known
+                else:
+                    allocation_incomplete = True
+                depreciation_pending = True  # the year's depreciation is unknown: no profit figure
             elif percentage != 0:
                 allocation_incomplete = True
             totals["input_vat"] += vat
@@ -116,7 +119,10 @@ def build_profit_loss(
 
     review("Accounting totals are provisional; source evidence and tax treatment require validation")
     balance = totals["output_vat"] - totals["recoverable_input_vat"]
-    provisional = None if incomplete or allocation_incomplete else money(totals["revenue_total"] - totals["provisional_business_expenses_total"])
+    before_depreciation = None if incomplete or allocation_incomplete else money(totals["revenue_total"] - totals["provisional_business_expenses_total"])
+    provisional = None if depreciation_pending else before_depreciation
+    if depreciation_pending:
+        review("Capital assets present: depreciation for the year is not computed, so no profit figure is given")
     return {
         "tax_year": year, "status": "REVIEW_REQUIRED", "totals_are_provisional": True,
         "vat_registered": vat_registered, "vat_accounting_method": vat_accounting_method,
@@ -128,6 +134,7 @@ def build_profit_loss(
         "accounts_receivable": None if incomplete else money(totals["accounts_receivable"]),
         "accounts_payable": None if incomplete else money(totals["accounts_payable"]),
         "profit_or_loss": None, "provisional_profit_or_loss": provisional,
+        "provisional_profit_before_depreciation": before_depreciation, "depreciation_pending": depreciation_pending,
         "vat": {
             "status": "REVIEW_REQUIRED" if vat_registered is not False else "NOT_APPLICABLE",
             "output_vat": None if incomplete else money(totals["output_vat"]),
