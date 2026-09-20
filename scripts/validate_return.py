@@ -106,6 +106,14 @@ def _cap_total(rule: dict[str, Any] | None, cap: Any, source_values: dict[tuple[
     return total
 
 
+def _same_year(value: Any, year: int) -> bool:
+    """Nested years are read like the top-level one: 2025 and "2025" match, anything malformed does not."""
+    try:
+        return parse_tax_year(value) == year
+    except ValueError:
+        return False
+
+
 def _is_amount(value: Any) -> bool:
     """True for a non-zero amount, however it is written; an unreadable value counts as a claim."""
     if is_missing(value):
@@ -200,7 +208,7 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
         for required in ("section", "field", "value", "calculation", "rule", "source_document"):
             if is_missing(field.get(required)):
                 error(path, f"VERIFIED field missing {required}")
-        if field.get("tax_year", year) != year:
+        if not _same_year(field.get("tax_year", year), year):
             error(path, "Final field tax_year mismatch")
         if people and field.get("person") not in people:
             error(path, "Workpaper lists taxpayers: every final field needs 'person' (a taxpayer id or HOUSEHOLD)")
@@ -237,7 +245,7 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
             for key in ("document", "page", "field", "original_text", "extracted_value", "confidence"):
                 if is_missing(source.get(key)):
                     error(path, f"Source document missing {key}")
-            if source.get("status") != "VERIFIED" or source.get("tax_year") != year:
+            if source.get("status") != "VERIFIED" or not _same_year(source.get("tax_year"), year):
                 error(path, "Source document must be reviewed for the requested tax_year")
             page = source.get("page")
             if type(page) is not int or page < 1:
@@ -264,7 +272,7 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
             error(path, "Calculation must contain a reproducible operation and source references")
             continue
         if (not calculation.get("calculation_id") or calculation.get("status") != "VERIFIED"
-                or calculation.get("tax_year") != year or calculation.get("rule_ids") != [rule_id]):
+                or not _same_year(calculation.get("tax_year"), year) or calculation.get("rule_ids") != [rule_id]):
             error(path, "Calculation ID, review status, year or rule references are invalid")
         try:
             inputs = calculation.get("inputs")
