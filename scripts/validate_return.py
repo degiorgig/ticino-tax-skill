@@ -23,16 +23,61 @@ def _rule_value(rule: dict[str, Any] | None, key: Any) -> Decimal:
     return Decimal(str(money(values[key])))
 
 
-def _cap_total(rule: dict[str, Any] | None, cap: Any) -> Decimal:
-    """cap: [{"key": <rule value key>, "times": <whole number, default 1>}, ...] -> sum of key x times."""
-    if not isinstance(cap, list) or not cap:
-        raise ValueError("cap must be a non-empty list of {key, times}")
+def _application(rule: dict[str, Any] | None, operation: str, field_name: Any) -> dict[str, Any]:
+    """The recipe comes from the rule file. A workpaper can neither pick which limits apply nor skip one."""
+    application = rule.get("application") if isinstance(rule, dict) else None
+    if not isinstance(application, dict) or application.get("operation") != operation:
+        raise ValueError(f"Rule does not define a machine-checkable '{operation}' application; manual review required")
+    if field_name not in (application.get("field_names") or []):
+        raise ValueError(f"Rule is not applicable to field {field_name!r}")
+    return application
+
+
+def _pinned(calculation: dict[str, Any], application: dict[str, Any], names: tuple[str, ...]) -> None:
+    for name in names:
+        if name in calculation and calculation[name] != application.get(name):
+            raise ValueError(f"Calculation {name} differs from the rule's application")
+
+
+def _whole_number(value: Decimal, what: str) -> Decimal:
+    if value < 0 or value != value.to_integral_value():
+        raise ValueError(f"{what} must be a non-negative whole number taken from a source document")
+    return value
+
+
+def _cap_total(rule: dict[str, Any] | None, cap: Any, source_values: dict[tuple[str, str], Decimal], field_name: Any) -> Decimal:
+    """cap: [{"key": base}, {"key": per-unit, "times_input": {document, field}}].
+
+    Exactly one base limit (when the rule has any) plus per-unit limits whose multiplier is a documented
+    source value of this field. A literal multiplier is never accepted.
+    """
+    application = _application(rule, "cap", field_name)
+    base_keys = application.get("base_keys") or []
+    unit_keys = application.get("per_unit_keys") or []
+    if not isinstance(cap, list) or not cap or any(not isinstance(part, dict) for part in cap):
+        raise ValueError("cap must be a non-empty list of {key} / {key, times_input}")
+    keys = [part.get("key") for part in cap]
+    if len(set(keys)) != len(keys):
+        raise ValueError("cap lists the same limit twice")
+    if sum(1 for key in keys if key in base_keys) != (1 if base_keys else 0):
+        raise ValueError("cap must use exactly one of the rule's base limits")
     total = Decimal(0)
     for part in cap:
-        times = part.get("times", 1) if isinstance(part, dict) else None
-        if type(times) is not int or times < 0:
-            raise ValueError("cap entries need a rule value key and a non-negative whole 'times'")
-        total += _rule_value(rule, part.get("key")) * times
+        key = part.get("key")
+        if key in base_keys:
+            if set(part) != {"key"}:
+                raise ValueError("A base limit applies once; it takes no multiplier")
+            total += _rule_value(rule, key)
+        elif key in unit_keys:
+            if "times" in part:
+                raise ValueError("Literal 'times' is not accepted: use times_input referencing a source value")
+            ref = part.get("times_input")
+            ref_key = (ref.get("document"), ref.get("field")) if isinstance(ref, dict) else None
+            if ref_key not in source_values:
+                raise ValueError("cap times_input does not resolve to extracted evidence of this field")
+            total += _rule_value(rule, key) * _whole_number(source_values[ref_key], "cap multiplier")
+        else:
+            raise ValueError(f"cap key is not a limit of this rule: {key!r}")
     return total
 
 
@@ -188,22 +233,27 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
                 computed = values[0] - values[1]
             elif operation == "rule_value_times" and len(values) == 1:
                 # e.g. number of dependent children x per-child deduction
-                if values[0] < 0 or values[0] != values[0].to_integral_value():
-                    raise ValueError("rule_value_times needs a non-negative whole-number input")
-                computed = values[0] * _rule_value(rule, calculation.get("value_key"))
+                application = _application(rule, "rule_value_times", field.get("field"))
+                _pinned(calculation, application, ("value_key",))
+                computed = _whole_number(values[0], "rule_value_times input") * _rule_value(rule, application.get("value_key"))
             elif operation == "percent_clamped":
-                # e.g. 3% of net salary, min 2000, max 4000
-                computed = sum(values, Decimal(0)) * _rule_value(rule, calculation.get("percent_key")) / 100
-                if calculation.get("min_key") is not None:
-                    computed = max(computed, _rule_value(rule, calculation["min_key"]))
-                if calculation.get("max_key") is not None:
-                    computed = min(computed, _rule_value(rule, calculation["max_key"]))
+                # e.g. 3% of net salary, min 2000, max 4000 - percentage, floor and ceiling all come from the rule
+                application = _application(rule, "percent_clamped", field.get("field"))
+                _pinned(calculation, application, ("percent_key", "min_key", "max_key"))
+                computed = sum(values, Decimal(0)) * _rule_value(rule, application.get("percent_key")) / 100
+                if application.get("min_key") is not None:
+                    computed = max(computed, _rule_value(rule, application["min_key"]))
+                if application.get("max_key") is not None:
+                    computed = min(computed, _rule_value(rule, application["max_key"]))
             else:
                 raise ValueError("Unsupported operation or input count; manual review required")
-            if calculation.get("cap") is not None:
-                computed = min(computed, _cap_total(rule, calculation["cap"]))
-            elif operation in ("identity", "sum", "difference") and _has_limit(rule):
-                raise ValueError("Rule defines a limit: the calculation must declare 'cap' (or use a rule-value operation)")
+            if operation in ("identity", "sum", "difference"):
+                if calculation.get("cap") is not None:
+                    computed = min(computed, _cap_total(rule, calculation["cap"], source_values, field.get("field")))
+                elif _has_limit(rule):
+                    raise ValueError("Rule defines a limit: the calculation must declare 'cap'")
+            elif calculation.get("cap") is not None:
+                raise ValueError("cap is only valid with identity, sum or difference")
             if money(computed) != money(field.get("value")) or money(computed) != money(calculation.get("result")):
                 raise ValueError("Calculation result does not match sources or final amount")
         except (ValueError, TypeError) as exc:

@@ -10,6 +10,13 @@ rules:
   currency: CHF
   values:
     max_per_year: 3300
+  application:
+    operation: cap
+    field_names:
+    - travel_costs
+    base_keys:
+    - max_per_year
+    per_unit_keys: []
   legal_basis: Art. 26 Abs. 1 Bst. a DBG
   etax_cifra: '9'
   source:
@@ -87,6 +94,13 @@ rules:
     percent_of_net_salary: 3
     min: 2000
     max: 4000
+  application:
+    operation: percent_clamped
+    field_names:
+    - other_professional_costs
+    percent_key: percent_of_net_salary
+    min_key: min
+    max_key: max
   legal_basis: Berufskostenverordnung SR 642.118.1, Anhang
   etax_cifra: '9'
   source:
@@ -112,6 +126,13 @@ rules:
     percent_of_side_income: 20
     min: 800
     max: 2400
+  application:
+    operation: percent_clamped
+    field_names:
+    - side_employment_costs
+    percent_key: percent_of_side_income
+    min_key: min
+    max_key: max
   legal_basis: Berufskostenverordnung SR 642.118.1, Anhang
   etax_cifra: '9'
   source:
@@ -140,6 +161,18 @@ rules:
     others_without_pillar2_and_3a: 2700
     per_child: 700
     per_supported_person: 700
+  application:
+    operation: cap
+    field_names:
+    - insurance_premiums
+    base_keys:
+    - married_with_pillar2_or_3a
+    - married_without_pillar2_and_3a
+    - others_with_pillar2_or_3a
+    - others_without_pillar2_and_3a
+    per_unit_keys:
+    - per_child
+    - per_supported_person
   legal_basis: Art. 33 Abs. 1 Bst. g und Abs. 1bis DBG
   etax_cifra: '12'
   source:
@@ -188,6 +221,13 @@ rules:
   currency: CHF
   values:
     max_per_child: 25800
+  application:
+    operation: cap
+    field_names:
+    - childcare_costs
+    base_keys: []
+    per_unit_keys:
+    - max_per_child
   legal_basis: Art. 33 Abs. 3 DBG
   etax_cifra: '20'
   source:
@@ -212,6 +252,11 @@ rules:
   currency: CHF
   values:
     per_child: 6800
+  application:
+    operation: rule_value_times
+    field_names:
+    - child_deduction
+    value_key: per_child
   legal_basis: Art. 35 Abs. 1 Bst. a DBG
   etax_cifra: '25'
   source:
@@ -234,6 +279,11 @@ rules:
   currency: CHF
   values:
     per_person: 6800
+  application:
+    operation: rule_value_times
+    field_names:
+    - supported_person_deduction
+    value_key: per_person
   legal_basis: Art. 35 Abs. 1 Bst. b DBG
   etax_cifra: '25'
   source:
@@ -297,6 +347,13 @@ rules:
   currency: CHF
   values:
     max: 13000
+  application:
+    operation: cap
+    field_names:
+    - training_costs
+    base_keys:
+    - max
+    per_unit_keys: []
   legal_basis: Art. 33 Abs. 1 Bst. j DBG
   etax_cifra: '15'
   source:
@@ -319,6 +376,13 @@ rules:
   currency: CHF
   values:
     max: 10600
+  application:
+    operation: cap
+    field_names:
+    - political_party_contributions
+    base_keys:
+    - max
+    per_unit_keys: []
   legal_basis: Art. 33 Abs. 1 Bst. i DBG
   etax_cifra: '15'
   source:
@@ -350,3 +414,6 @@ notes:
 - 'Only values read directly in the cited official document are listed under rules. pending_rules are NOT usable:
   they document gaps.'
 - File status reflects provenance of the listed rules only, not completeness of tax coverage.
+- 'application: how validate_return may apply a rule''s values. Rules without it cannot back a VERIFIED amount.
+  Which base limit fits the taxpayer (e.g. with/without pillar 2) is a fact the validator cannot check: justify
+  it in the field notes.'

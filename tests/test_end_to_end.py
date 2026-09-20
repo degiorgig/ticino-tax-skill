@@ -23,7 +23,9 @@ def load(name):
 
 class EndToEndTests(unittest.TestCase):
     def test_step1_year(self):
-        self.assertEqual(validate_tax_year(2025)["status"], "VERIFIED")
+        result = validate_tax_year(2025)
+        self.assertTrue(result["structure_valid"] and result["rule_provenance_valid"])
+        self.assertEqual(result["status"], "UNVERIFIED")  # gaps are declared: proceed, but not a green light
 
     def test_step2_every_document_is_classified_or_unknown(self):
         types = {}
@@ -101,12 +103,12 @@ class RuleLimitTests(unittest.TestCase):
 
     def test_unknown_rule_value_key(self):
         self.workpaper["final_fields"][3]["calculation"]["value_key"] = "per_kid"
-        self.assertTrue(any("does not define" in m for m in self.messages()))
+        self.assertTrue(any("differs from the rule's application" in m for m in self.messages()))
 
     def test_rule_value_times_needs_a_whole_number(self):
         field = self.workpaper["final_fields"][3]
         field["source_document"][0]["extracted_value"] = 1.5
-        self.assertTrue(any("whole-number" in m for m in self.messages()))
+        self.assertTrue(any("whole number" in m for m in self.messages()))
 
     def test_percent_clamped_applies_minimum_and_maximum(self):
         field = copy.deepcopy(self.workpaper["final_fields"][5])
@@ -114,6 +116,49 @@ class RuleLimitTests(unittest.TestCase):
         field["value"] = field["calculation"]["result"] = 4000
         self.workpaper["final_fields"][5] = field
         self.assertEqual(self.messages(), [])
+
+    # --- regressions for the review findings: the workpaper must not be able to loosen a legal limit ---
+    def test_cap_multiplier_must_come_from_evidence(self):
+        field = self.workpaper["final_fields"][1]  # TI insurance premiums: 10'900 + 1 child x 1'200 = 12'100
+        unit = field["calculation"]["cap"][1]
+        field["value"] = field["calculation"]["result"] = 13200
+        self.assertIn("Calculation result does not match sources or final amount", self.messages())
+        unit.pop("times_input"); unit["times"] = 2
+        self.assertTrue(any("Literal 'times'" in m for m in self.messages()))
+        unit.pop("times"); unit["times_input"] = {"document": "documents/nope.txt", "field": "x"}
+        self.assertTrue(any("times_input does not resolve" in m for m in self.messages()))
+
+    def test_cap_cannot_stack_or_borrow_limits(self):
+        field = self.workpaper["final_fields"][1]
+        field["calculation"]["cap"].append({"key": "married_without_pillar2_and_3a"})
+        self.assertTrue(any("exactly one" in m for m in self.messages()))
+        field["calculation"]["cap"] = [{"key": "married_general", "times_input": {"document": "x", "field": "y"}}]
+        self.assertTrue(any("takes no multiplier" in m for m in self.messages()))
+        field["calculation"]["cap"] = [{"key": "married_general"}, {"key": "married_general"}]
+        self.assertTrue(any("twice" in m for m in self.messages()))
+
+    def test_percent_clamped_limits_cannot_be_dropped_or_swapped(self):
+        field = self.workpaper["final_fields"][5]  # 3% of net salary, min 2'000, max 4'000
+        field["source_document"][0]["extracted_value"] = 200000
+        field["value"] = field["calculation"]["result"] = 6000
+        del field["calculation"]["max_key"]
+        self.assertIn("Calculation result does not match sources or final amount", self.messages())
+        field["calculation"]["max_key"] = None
+        self.assertTrue(any("differs from the rule's application" in m for m in self.messages()))
+        field["calculation"]["max_key"] = "max"
+        field["value"] = field["calculation"]["result"] = 4000
+        self.assertEqual(self.messages(), [])
+
+    def test_rule_must_match_the_field_and_define_an_application(self):
+        field = self.workpaper["final_fields"][0]  # pillar 3a backed by the 13'000 training-cost rule
+        field["rule"] = {"rule_id": "TI_2025_TRAINING_COSTS_MAX"}
+        field["calculation"]["rule_ids"] = ["TI_2025_TRAINING_COSTS_MAX"]
+        field["calculation"]["cap"] = [{"key": "max"}]
+        self.assertTrue(any("not applicable to field 'pillar_3a'" in m for m in self.messages()))
+        field = self.workpaper["final_fields"][3]  # a rule without an application cannot back an amount
+        field["rule"] = {"rule_id": "TI_2025_SUPPORTED_PERSON_DEDUCTION"}
+        field["calculation"].update(rule_ids=["TI_2025_SUPPORTED_PERSON_DEDUCTION"], value_key="max")
+        self.assertTrue(any("machine-checkable" in m for m in self.messages()))
 
     def test_person_is_required_when_taxpayers_are_listed(self):
         del self.workpaper["final_fields"][0]["person"]

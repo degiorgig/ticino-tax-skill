@@ -109,6 +109,13 @@ rules:
     with_pillar2_max: 7258
     without_pillar2_percent_of_income: 20
     without_pillar2_max: 36288
+  application:
+    operation: cap
+    field_names:
+    - pillar_3a
+    base_keys:
+    - with_pillar2_max
+    per_unit_keys: []
   etax_cifra: '11'
   source:
     authority: Divisione delle contribuzioni Ticino
@@ -135,6 +142,17 @@ rules:
     others_general: 5500
     others_without_pillar2_and_3a: 7800
     per_child_or_supported_person: 1200
+  application:
+    operation: cap
+    field_names:
+    - insurance_premiums
+    base_keys:
+    - married_general
+    - married_without_pillar2_and_3a
+    - others_general
+    - others_without_pillar2_and_3a
+    per_unit_keys:
+    - per_child_or_supported_person
   etax_cifra: '12'
   source:
     authority: Divisione delle contribuzioni Ticino
@@ -219,6 +237,13 @@ rules:
   currency: CHF
   values:
     max: 10700
+  application:
+    operation: cap
+    field_names:
+    - training_costs
+    base_keys:
+    - max
+    per_unit_keys: []
   etax_cifra: '15'
   source:
     authority: Divisione delle contribuzioni Ticino
@@ -239,6 +264,13 @@ rules:
   currency: CHF
   values:
     max: 10600
+  application:
+    operation: cap
+    field_names:
+    - political_party_contributions
+    base_keys:
+    - max
+    per_unit_keys: []
   etax_cifra: '15'
   source:
     authority: Divisione delle contribuzioni Ticino
@@ -323,6 +355,11 @@ rules:
   currency: CHF
   values:
     per_child: 11500
+  application:
+    operation: rule_value_times
+    field_names:
+    - child_deduction
+    value_key: per_child
   etax_cifra: '25'
   source:
     authority: Divisione delle contribuzioni Ticino
@@ -395,3 +432,6 @@ notes:
 - 'Only values read directly in the cited official document are listed under rules. pending_rules are NOT usable:
   they document gaps.'
 - File status reflects provenance of the listed rules only, not completeness of tax coverage.
+- 'application: how validate_return may apply a rule''s values. Rules without it cannot back a VERIFIED amount.
+  Which base limit fits the taxpayer (e.g. with/without pillar 2) is a fact the validator cannot check: justify
+  it in the field notes.'

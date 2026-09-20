@@ -99,6 +99,16 @@
           "confidence": 0.99,
           "tax_year": 2025,
           "status": "VERIFIED"
+        },
+        {
+          "document": "documents/libretto_famiglia.txt",
+          "page": 1,
+          "field": "dependent_children_count",
+          "original_text": "Figli a carico al 31.12.2025: 1",
+          "extracted_value": 1,
+          "confidence": 0.99,
+          "tax_year": 2025,
+          "status": "VERIFIED"
         }
       ],
       "calculation": {
@@ -121,13 +131,17 @@
           },
           {
             "key": "per_child_or_supported_person",
-            "times": 1
+            "times_input": {
+              "document": "documents/libretto_famiglia.txt",
+              "field": "dependent_children_count"
+            }
           }
         ],
         "result": 12100.0
       },
       "notes": [
-        "Paid 13'200; capped at 10'900 + 1 x 1'200."
+        "Paid 13'200; capped at 10'900 + 1 x 1'200.",
+        "Base limit 'married, in general': both spouses contribute to pillar 2 (salary certificates, cifra 10.1)."
       ]
     },
     {
@@ -148,6 +162,16 @@
           "field": "premiums_total",
           "original_text": "totale famiglia: CHF 13'200.00",
           "extracted_value": 13200,
+          "confidence": 0.99,
+          "tax_year": 2025,
+          "status": "VERIFIED"
+        },
+        {
+          "document": "documents/libretto_famiglia.txt",
+          "page": 1,
+          "field": "dependent_children_count",
+          "original_text": "Figli a carico al 31.12.2025: 1",
+          "extracted_value": 1,
           "confidence": 0.99,
           "tax_year": 2025,
           "status": "VERIFIED"
@@ -173,11 +197,17 @@
           },
           {
             "key": "per_child",
-            "times": 1
+            "times_input": {
+              "document": "documents/libretto_famiglia.txt",
+              "field": "dependent_children_count"
+            }
           }
         ],
         "result": 4400.0
-      }
+      },
+      "notes": [
+        "Base limit 'married, in general': both spouses contribute to pillar 2 (salary certificates, cifra 10.1)."
+      ]
     },
     {
       "section": "25 Deduzioni sociali",
