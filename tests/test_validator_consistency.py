@@ -59,6 +59,20 @@ class QuoteTests(unittest.TestCase):
         self.assertTrue(any("original_text does not contain the extracted value" in m for m in self.messages(field)))
 
 
+    def test_sign_of_the_extracted_value_must_match_the_quote(self):
+        field = verified_field(-1200.0)  # helper quote is "CHF 1'200.00"
+        self.assertTrue(any("original_text does not contain the extracted value" in m for m in self.messages(field)))
+        for quote in ("Storno CHF -1'200.00", "Saldo: −1200.00"):
+            field = verified_field(-1200.0)
+            field["source_document"][0]["original_text"] = quote
+            self.assertEqual(self.messages(field), [], quote)
+
+    def test_a_hyphen_inside_a_date_or_range_is_not_a_minus_sign(self):
+        field = verified_field(12.0)
+        field["source_document"][0]["original_text"] = "Periodo 01-12 mesi"
+        self.assertEqual(self.messages(field), [])
+
+
 class CrossFieldTests(unittest.TestCase):
     def messages(self, workpaper, root=None):
         args = (workpaper, 2025) if root is None else (workpaper, 2025, root)
@@ -130,6 +144,12 @@ class ChecklistTests(unittest.TestCase):
         workpaper = {"tax_year": 2025, "final_fields": [verified_field(), {"status": "REVIEW_REQUIRED", "field": "open", "value": 1}]}
         rows = generate_rows(workpaper, tax_year=2025, root=self.root)
         self.assertEqual([r["field"] for r in rows], ["test_amount", "open"])
+
+    def test_malformed_review_item_stays_visible(self):
+        """PR review: an item without its own checklist row must keep its validation row."""
+        workpaper = {"tax_year": 2025, "final_fields": [verified_field()], "review_items": ["check the foreign account"]}
+        rows = generate_rows(workpaper, tax_year=2025, root=self.root)
+        self.assertIn(("Validation", "review_items[0]"), [(r["section"], r["field"]) for r in rows])
 
     def test_only_item_level_open_status_errors_are_suppressed(self):
         """PR review: a workpaper-level error must stay visible even if its text starts like an item one."""

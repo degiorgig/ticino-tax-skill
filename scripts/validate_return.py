@@ -21,9 +21,19 @@ QUOTED_NUMBER = re.compile(r"(?<![\d.])(\d{1,3}(?:['’\u00a0 ]\d{3})+|\d+)(?:\.
 
 
 def _quoted_numbers(text: str) -> set[Decimal]:
-    """Amounts literally printed in a quote. The apostrophe is a thousands separator, never a decimal point."""
-    return {Decimal(str(money(re.sub(r"\D", "", whole) + "." + (cents or "0"))))
-            for whole, cents in QUOTED_NUMBER.findall(text)}
+    """Signed amounts literally printed in a quote. The apostrophe is a thousands separator, never a decimal point.
+
+    A minus counts only when it opens the number ("CHF -1'200"); glued to a previous letter or digit it is a
+    separator ("01-12", "2024-2025").
+    """
+    numbers = set()
+    for match in QUOTED_NUMBER.finditer(text):
+        number = Decimal(str(money(re.sub(r"\D", "", match.group(1)) + "." + (match.group(2) or "0"))))
+        start = match.start()
+        if start and text[start - 1] in "-−" and not (start > 1 and text[start - 2].isalnum()):
+            number = -number
+        numbers.add(number)
+    return numbers
 
 
 def _rule_value(rule: dict[str, Any] | None, key: Any) -> Decimal:
@@ -135,7 +145,9 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
         error("review_items", "Expected a list")
     else:
         for index, item in enumerate(reviews):
-            if not isinstance(item, dict) or item.get("status") not in ("VERIFIED", "NOT_APPLICABLE"):
+            if not isinstance(item, dict):
+                error(f"review_items[{index}]", "Review item must be an object")  # no checklist row of its own
+            elif item.get("status") not in ("VERIFIED", "NOT_APPLICABLE"):
                 error(f"review_items[{index}]", "Unresolved review item", OPEN_ITEM)
 
     people: set[str] = set()
@@ -228,7 +240,7 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
                 continue
             try:
                 value = Decimal(str(money(source.get("extracted_value"))))
-                if abs(value) not in _quoted_numbers(source["original_text"]):
+                if value not in _quoted_numbers(source["original_text"]):
                     error(path, "Source original_text does not contain the extracted value")
                 key = (source["document"], source["field"])
                 if key in source_values:
