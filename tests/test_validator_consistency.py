@@ -109,6 +109,17 @@ class CrossFieldTests(unittest.TestCase):
         field["value"] = field["calculation"]["result"] = 13200.0
         self.assertEqual(self.messages(workpaper), [])
 
+    def test_a_zero_amount_written_as_text_is_not_a_claim(self):
+        """PR review: "0" must count as zero, or it wrongly triggers the pillar 3a conflict."""
+        workpaper = resolved_example()
+        workpaper["final_fields"] = [f for f in workpaper["final_fields"] if f["field"] != "pillar_3a"]
+        workpaper["final_fields"].append({"field": "pillar_3a", "status": "NOT_APPLICABLE", "notes": ["none paid"]})
+        workpaper["final_fields"].append({"field": "pillar_3a", "status": "REVIEW_REQUIRED", "value": "0.00"})
+        field = ti_insurance(workpaper)
+        field["calculation"]["cap"][0]["key"] = "married_without_pillar2_and_3a"
+        field["value"] = field["calculation"]["result"] = 13200.0
+        self.assertFalse(any("conflicts with" in m for m in self.messages(workpaper)))
+
     def test_cap_is_mandatory_whenever_the_rule_application_is_a_cap(self):
         """PR review: limit detection must not depend on how the rule's value keys are spelled."""
         root = make_root(with_rule=False)

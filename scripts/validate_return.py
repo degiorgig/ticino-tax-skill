@@ -106,6 +106,16 @@ def _cap_total(rule: dict[str, Any] | None, cap: Any, source_values: dict[tuple[
     return total
 
 
+def _is_amount(value: Any) -> bool:
+    """True for a non-zero amount, however it is written; an unreadable value counts as a claim."""
+    if is_missing(value):
+        return False
+    try:
+        return money(value) != 0
+    except ValueError:
+        return True
+
+
 def _has_limit(rule: dict[str, Any] | None) -> bool:
     """The rule's declared application decides; key names are only a fallback for rules without one."""
     application = rule.get("application") if isinstance(rule, dict) else None
@@ -169,7 +179,7 @@ def validate_return(workpaper: dict[str, Any], tax_year: int | str, root: Path =
     # Fields that carry an amount, whatever their status: an open pillar 3a claim still rules out the
     # "no pillar 3a" limits elsewhere.
     claimed_fields = {f["field"] for f in fields if isinstance(f, dict) and isinstance(f.get("field"), str)
-                      and f.get("status") != "NOT_APPLICABLE" and not is_missing(f.get("value")) and f.get("value") != 0}
+                      and f.get("status") != "NOT_APPLICABLE" and _is_amount(f.get("value"))}
     seen: set[tuple[str, str, str]] = set()
     for idx, field in enumerate(fields):
         path = f"final_fields[{idx}]"
